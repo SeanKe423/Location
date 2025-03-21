@@ -20,31 +20,98 @@ const SignUp = () => {
     e.preventDefault();
     try {
       const res = await axios.post("http://localhost:5000/api/auth/signup", formData);
-      alert(res.data.message);
-      navigate("/login");
+      localStorage.setItem("token", res.data.token);
+      localStorage.setItem("role", res.data.role);
+      // Redirect based on role
+      navigate(formData.role === "user" ? "/user-profile" : "/counselor-profile");
     } catch (error) {
       alert(error.response?.data?.message || "Signup failed");
     }
   };
 
   return (
-    <div className="signup-container">
-      <div className="signup-overlay">
-        <div className="signup-content">
-          <h2>Create Your Account</h2>
-          <form onSubmit={handleSubmit}>
-            <input type="text" name="name" placeholder="Name" onChange={handleChange} required />
-            <input type="email" name="email" placeholder="Email" onChange={handleChange} required />
-            <input type="password" name="password" placeholder="Password" onChange={handleChange} required />
-            <select name="role" onChange={handleChange}>
-              <option value="user">User</option>
-              <option value="counselor">Counselor</option>
-            </select>
-            <button type="submit">Sign Up</button>
-            <p className="auth-link">
-              Already have an account? <Link to="/login">Login</Link>
+    <div className="auth-container">
+      <div className="auth-split-layout">
+        {/* Left side - Hero section */}
+        <div className="auth-hero signup-hero">
+          <div className="auth-hero-content">
+            <h1 style={{ fontSize: '4rem', marginBottom: '1rem' }}>Begin Your Journey</h1>
+            <p style={{ fontSize: '1.5rem', opacity: '0.9' }}>
+              Join our community and take the first step towards mental wellness
             </p>
-          </form>
+          </div>
+        </div>
+
+        {/* Right side - Sign Up Form */}
+        <div className="auth-form-container">
+          <div className="auth-form-content">
+            <h2 style={{ fontSize: '2.5rem', marginBottom: '2rem' }}>Create Account</h2>
+            <form onSubmit={handleSubmit} className="auth-form">
+              <div className="form-group">
+                <input
+                  type="text"
+                  name="name"
+                  placeholder="Full Name"
+                  onChange={handleChange}
+                  required
+                  className="auth-input"
+                  style={{ fontSize: '1.2rem', padding: '1rem' }}
+                />
+              </div>
+              
+              <div className="form-group">
+                <input
+                  type="email"
+                  name="email"
+                  placeholder="Email Address"
+                  onChange={handleChange}
+                  required
+                  className="auth-input"
+                  style={{ fontSize: '1.2rem', padding: '1rem' }}
+                />
+              </div>
+              
+              <div className="form-group">
+                <input
+                  type="password"
+                  name="password"
+                  placeholder="Password"
+                  onChange={handleChange}
+                  required
+                  className="auth-input"
+                  style={{ fontSize: '1.2rem', padding: '1rem' }}
+                />
+              </div>
+              
+              <div className="form-group">
+                <select 
+                  name="role" 
+                  onChange={handleChange}
+                  className="auth-select"
+                  style={{ fontSize: '1.2rem', padding: '1rem' }}
+                >
+                  <option value="user">User</option>
+                  <option value="counselor">Counselor</option>
+                </select>
+              </div>
+              
+              <button 
+                type="submit" 
+                className="auth-button"
+                style={{ fontSize: '1.2rem', padding: '1rem' }}
+              >
+                Sign Up
+              </button>
+            </form>
+            
+            <p className="auth-footer" style={{ fontSize: '1rem', marginTop: '1.5rem' }}>
+              Already have an account? <Link to="/login" className="auth-link">Login</Link>
+            </p>
+            
+            <Link to="/" className="back-to-home" style={{ fontSize: '0.9rem' }}>
+              Back to Home
+            </Link>
+          </div>
         </div>
       </div>
     </div>

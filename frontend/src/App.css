@@ -39,12 +39,13 @@
 
 /* Add these new styles */
 form {
-  background: white;
-  padding: 2rem;
+  background: rgb(255, 255, 255);
+  padding: 1rem;
   border-radius: 15px;
-  box-shadow: 0 8px 32px rgba(31, 38, 135, 0.1);
+  box-shadow: 0 8px 32px rgb(255, 255, 255);
   max-width: 400px;
   margin: 2rem auto;
+  width: 100%;
 }
 
 input, select {
@@ -89,71 +90,51 @@ h2 {
 .landing-container {
   min-height: 100vh;
   display: flex;
-  justify-content: center;
   align-items: center;
-  background-image: url('./calm.jpg');
+  justify-content: center;
+  background: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), url('C:\Users\USER\OneDrive\Desktop\CCon\frontend\src\Signupdoc.jpg');
   background-size: cover;
   background-position: center;
-  background-repeat: no-repeat;
-  position: relative;
 }
 
 .landing-overlay {
   width: 100%;
-  min-height: 100vh;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  background: linear-gradient(
-    rgba(0, 0, 0, 0.4),
-    rgba(0, 0, 0, 0.5)
-  );
+  padding: 2rem;
 }
 
 .landing-content {
+  max-width: 800px;
+  margin: 0 auto;
   text-align: center;
-  padding: 3rem;
-  max-width: 600px;
-  background: transparent;
-  border-radius: 20px;
+  color: white;
 }
 
 .landing-content h1 {
-  font-size: 4rem;
-  color: #2196F3;
-  margin-bottom: 1.5rem;
-  font-weight: 700;
-  letter-spacing: 2px;
-  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+  font-size: 3rem;
+  margin-bottom: 1rem;
 }
 
 .landing-content p {
-  font-size: 1.5rem;
-  color: white;
-  margin-bottom: 2.5rem;
-  line-height: 1.6;
-  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+  font-size: 1.2rem;
+  margin-bottom: 2rem;
 }
 
 .landing-buttons {
   display: flex;
-  gap: 1.5rem;
+  gap: 1rem;
   justify-content: center;
 }
 
 .landing-button {
   padding: 0.8rem 2rem;
+  border-radius: 5px;
   text-decoration: none;
-  border-radius: 25px;
   font-weight: 600;
-  font-size: 1.1rem;
   transition: all 0.3s ease;
-  text-transform: uppercase;
-  letter-spacing: 1px;
 }
 
 .landing-button.primary {
-  background-color: #2196F3;
+  background-color: #4CAF50;
   color: white;
 }
 
@@ -163,14 +144,9 @@ h2 {
   border: 2px solid white;
 }
 
-.landing-button.primary:hover {
-  background-color: #1976D2;
+.landing-button:hover {
   transform: translateY(-2px);
-}
-
-.landing-button.secondary:hover {
-  background-color: rgba(255, 255, 255, 0.1);
-  transform: translateY(-2px);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
 }
 
 /* Add subtle zoom animation */
@@ -280,4 +256,668 @@ h2 {
 
 .auth-link a:hover {
   text-decoration: underline;
+}
+
+/* Profile Page Styles */
+.profile-container {
+  min-height: 100vh;
+  background: linear-gradient(rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.6)),
+              url('./tp.jpeg');
+  background-size: cover;
+  background-position: center;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 2rem;
+}
+
+.profile-overlay {
+  width: 100%;
+  min-height: 100vh;
+  padding: 2rem;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.profile-content {
+  background: rgba(255, 255, 255, 0.95);
+  padding: 2.5rem;
+  border-radius: 15px;
+  box-shadow: 0 8px 32px rgba(31, 38, 135, 0.2);
+  width: 100%;
+  max-width: 800px;
+}
+
+.profile-content h2 {
+  color: #2c3e50;
+  font-size: 2.2rem;
+  margin-bottom: 2rem;
+  text-align: center;
+  font-weight: 600;
+}
+
+/* Profile Form Styling Updates */
+.auth-container {
+  min-height: 100vh;
+  background: #f5f5f5;
+}
+
+.auth-split-layout {
+  display: flex;
+  height: 100vh; /* Fixed height instead of min-height */
+  overflow: hidden; /* Prevent scrolling on the container */
+}
+
+.auth-form-container {
+  flex: 1;
+  width: 50%;
+  max-width: 50%;
+  padding: 2rem;
+  background: white;
+  overflow-y: auto; /* Allow scrolling within the form container */
+  height: 100vh; /* Match parent height */
+}
+
+.auth-form-content {
+  width: 100%;
+  max-width: 400px;
+  margin: 0 auto;
+  padding: 1rem;
+}
+
+.form-step-section {
+  max-width: 400px;
+  margin: 0 auto;
+  padding: 1rem;
+}
+
+/* Hero section adjustments */
+.auth-hero {
+  display: flex;
+   background: linear-gradient(rgba(0, 0, 0, 0.3), rgba(0, 0, 0, 0.3)), 
+              url('C:\Users\USER\OneDrive\Desktop\CCon\frontend\src\Logindoc.jpg');
+  background-size: cover;
+  background-position: center;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  width: 564px;
+  height: 100%;
+}
+
+.auth-hero img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* Form elements sizing */
+.radio-group, .checkbox-group {
+  margin-bottom: 1.5rem;
+  padding: 1rem;
+}
+
+.radio-group div, 
+.checkbox-group div,
+input[type="text"] {
+  width: 90%;
+  margin: 0.5rem auto;
+}
+
+/* Responsive design */
+@media (max-width: 768px) {
+  .auth-split-layout {
+    flex-direction: column;
+    height: auto; /* Allow content to determine height on mobile */
+  }
+
+  .auth-hero {
+    max-width: 100%;
+    height: 30vh;
+  }
+
+  .auth-form-container {
+    width: 100%;
+    max-width: 100%;
+    height: auto;
+  }
+}
+
+/* Dashboard Styles */
+.dashboard-container {
+  max-width: 1200px;
+  margin: 2rem auto;
+  padding: 2rem;
+  background-color: #ffffff;
+  border-radius: 10px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.dashboard-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 2rem;
+  padding-bottom: 1rem;
+  border-bottom: 2px solid #eee;
+}
+
+.dashboard-actions {
+  display: flex;
+  gap: 1rem;
+}
+
+.edit-button, .logout-button {
+  padding: 0.5rem 1rem;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-weight: 600;
+}
+
+.edit-button {
+  background-color: #4CAF50;
+  color: white;
+}
+
+.logout-button {
+  background-color: #f44336;
+  color: white;
+}
+
+.profile-info {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+}
+
+.info-section {
+  background-color: #f9f9f9;
+  padding: 1.5rem;
+  border-radius: 8px;
+}
+
+.info-section h4 {
+  color: #333;
+  margin-bottom: 1rem;
+  border-bottom: 1px solid #ddd;
+  padding-bottom: 0.5rem;
+}
+
+.info-section p {
+  margin: 0.5rem 0;
+  line-height: 1.6;
+}
+
+.loading {
+  text-align: center;
+  padding: 2rem;
+  font-size: 1.2rem;
+  color: #666;
+}
+
+/* Add these to your existing CSS */
+.error-message {
+  text-align: center;
+  padding: 2rem;
+  margin: 2rem auto;
+  max-width: 600px;
+  background-color: #ffebee;
+  color: #c62828;
+  border-radius: 8px;
+  border: 1px solid #ef9a9a;
+}
+
+/* Auth Pages Styles (Login/Signup) */
+.auth-hero-content {
+  color: white;
+  text-align: center;
+  max-width: 500px;
+  
+}
+
+.auth-hero-content h1 {
+  font-size: 3.5rem;
+  margin-bottom: 1rem;
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+.auth-hero-content p {
+  font-size: 1.2rem;
+  line-height: 1.6;
+  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.3);
+}
+
+/* Right side - Form section */
+.auth-form-content h2 {
+  font-size: 2rem;
+  color: #333;
+  margin-bottom: 2rem;
+  text-align: center;
+}
+
+.auth-form {
+  display: flex;
+  flex-direction: column;
+  gap: 1.2rem;
+  
+}
+
+.auth-input,
+.auth-select {
+  width: 90% !important;
+  padding: 12px;
+  border: 2px solid #e0e0e0;
+  border-radius: 5px;
+  font-size: 1rem;
+  background: rgb(51, 46, 46) !important;
+  box-shadow: none;
+  outline: none;
+}
+
+.auth-input:focus,
+.auth-select:focus {
+  box-shadow: none;
+  border: 1px solid #e0e0e0;
+  outline: none;
+}
+
+.auth-input:hover,
+.auth-select:hover {
+  border: 1px solid #d0d0d0;
+}
+
+.auth-input::placeholder,
+.auth-select::placeholder {
+  color: white;
+  opacity: 0.9; /* Makes the placeholder slightly transparent */
+}
+
+/* For Firefox */
+.auth-input::-moz-placeholder,
+.auth-select::-moz-placeholder {
+  color: white;
+  opacity: 0.9;
+}
+
+/* For Internet Explorer */
+.auth-input:-ms-input-placeholder,
+.auth-select:-ms-input-placeholder {
+  color: white;
+  opacity: 0.9;
+}
+
+/* For Edge */
+.auth-input::-ms-input-placeholder,
+.auth-select::-ms-input-placeholder {
+  color: white;
+  opacity: 0.9;
+}
+
+.auth-button {
+  background-color: #4CAF50;
+  color: white;
+  padding: 14px;
+  border: none;
+  border-radius: 5px;
+  font-size: 1.1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.auth-button:hover {
+  background-color: #45a049;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(76, 175, 80, 0.2);
+}
+
+.auth-footer {
+  text-align: center;
+  margin-top: 2rem;
+  color: #666;
+}
+
+.auth-link {
+  color: #4CAF50;
+  text-decoration: none;
+  font-weight: 600;
+  transition: color 0.3s ease;
+}
+
+.auth-link:hover {
+  color: #45a049;
+}
+
+.back-to-home {
+  display: block;
+  text-align: center;
+  margin-top: 1.5rem;
+  color: #666;
+  text-decoration: none;
+  font-size: 0.9rem;
+  transition: color 0.3s ease;
+}
+
+.back-to-home:hover {
+  color: #4CAF50;
+}
+
+/* Dark mode support */
+@media (prefers-color-scheme: dark) {
+  .auth-form-container {
+    background: #1a1a1a;
+  }
+
+  .auth-form-content h2 {
+    color: #fff;
+  }
+
+  .auth-input,
+  .auth-select {
+    background: #2d2d2d;
+    border-color: #404040;
+    color: rgba(255, 255, 255, 0.9);
+    
+  }
+
+  .auth-footer,
+  .back-to-home {
+    color: #999;
+  }
+}
+
+/* Add this new class for the signup hero section */
+.signup-hero {
+  background: linear-gradient(rgba(0, 0, 0, 0.3), rgba(0, 0, 0, 0.3)), 
+              url('C:\Users\USER\OneDrive\Desktop\CCon\frontend\src\signupuser.jpg');
+  background-size: cover;
+  background-position: center;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  height: 100%;
+}
+
+/* Add styles for the progress indicator */
+.progress-indicator {
+  display: flex;
+  justify-content: center;
+  gap: 1rem;
+  margin: 2rem 0;
+}
+
+.step-dot {
+  width: 12px;
+  height: 12px;
+  background: #ddd;
+  border-radius: 50%;
+  transition: all 0.3s ease;
+}
+
+.step-dot.active {
+  background: #4CAF50;
+  transform: scale(1.2);
+}
+
+/* File upload styling */
+.file-upload {
+  margin: 1rem 0;
+}
+
+.file-upload label {
+  display: block;
+  margin-bottom: 0.5rem;
+  color: #2c3e50;
+  font-weight: 500;
+}
+
+.file-upload input[type="file"] {
+  width: 100%;
+  padding: 0.5rem;
+  border: 2px dashed #4CAF50;
+  border-radius: 8px;
+  background: #f8f9fa;
+}
+
+/* Checkbox and terms styling */
+.terms-checkbox {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin: 1rem 0;
+}
+
+.terms-checkbox input[type="checkbox"] {
+  width: 20px;
+  height: 20px;
+  accent-color: #4CAF50;
+}
+
+.terms-checkbox label {
+  color: #2c3e50;
+  font-size: 1rem;
+}
+
+/* Counselor Profile specific styles */
+.counselor-hero {
+  flex: 1;
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  overflow: hidden;
+}
+
+.counselor-hero img {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.auth-hero-content {
+  position: relative;
+  z-index: 1;
+  text-align: center;
+  color: white;
+  padding: 2rem;
+  background: rgba(0, 0, 0, 0); /* Semi-transparent overlay for text readability */
+  border-radius: 10px;
+opacity: 1;
+}
+
+.counselor-form {
+  width: 110% !important;
+  max-width: 100%;
+  padding: 0;
+  margin: 0;
+  box-shadow: none;
+}
+
+.counselor-form .form-step-section {
+  margin-bottom: 2rem;
+}
+
+.counselor-form .form-navigation {
+  margin-top: 2rem;
+  display: flex;
+  gap: 1rem;
+  justify-content: space-between;
+}
+
+.counselor-form .form-navigation button {
+  flex: 1;
+}
+
+/* Responsive styles */
+@media (max-width: 768px) {
+  .auth-split-layout {
+    flex-direction: column;
+  }
+
+  .counselor-hero {
+    min-height: 30vh;
+  }
+
+  .auth-form-container {
+    min-height: 70vh;
+  }
+}
+
+/* User Profile Form Styles */
+.profile-container {
+  min-height: 100vh;
+  background: #f5f5f5;
+}
+
+.profile-split-layout {
+  display: flex;
+  min-height: 100vh;
+}
+
+.profile-hero {
+  flex: 1;
+  background: linear-gradient(rgba(0, 0, 0, 0.3), rgba(0, 0, 0, 0.3)), 
+              url('C:\Users\USER\OneDrive\Desktop\CCon\frontend\src\loginuser.jpg');
+  background-size: cover;
+  background-position: center;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem;
+}
+
+.profile-form-container {
+  flex: 1;
+  padding: 2rem;
+  background: white;
+  overflow-y: auto;
+  max-height: 100vh;
+}
+
+.form-step-section {
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 2rem;
+}
+
+.form-step-section h3 {
+  color: #333;
+  font-size: 1.8rem;
+  margin-bottom: 2rem;
+  text-align: center;
+}
+
+.form-questions {
+  background: white;
+  border-radius: 10px;
+  padding: 2rem;
+}
+
+.radio-group, .checkbox-group {
+  margin-bottom: 2rem;
+}
+
+.radio-group > label, .checkbox-group > label {
+  display: block;
+  font-size: 1.2rem;
+  color: #333;
+  margin-bottom: 1rem;
+  font-weight: 600;
+}
+
+.radio-group div, .checkbox-group div {
+  margin: 0.8rem 0;
+  display: flex;
+  align-items: center;
+  padding: 0.5rem;
+  transition: background-color 0.3s ease;
+  border-radius: 5px;
+}
+
+.radio-group div:hover, .checkbox-group div:hover {
+  background-color: #f5f5f5;
+}
+
+.radio-group input[type="radio"],
+.checkbox-group input[type="checkbox"] {
+  margin-right: 10px;
+  width: 18px;
+  height: 18px;
+  cursor: pointer;
+}
+
+.radio-group label, .checkbox-group label {
+  font-size: 1rem;
+  color: #555;
+  cursor: pointer;
+}
+
+input[type="text"] {
+  width: 100%;
+  padding: 12px;
+  margin-top: 0.5rem;
+  border: 2px solid #e0e0e0;
+  border-radius: 5px;
+  font-size: 1rem;
+  transition: border-color 0.3s ease;
+}
+
+input[type="text"]:focus {
+  border-color: #4CAF50;
+  outline: none;
+}
+
+.form-navigation {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 2rem;
+  padding: 0 1rem;
+}
+
+.form-navigation button {
+  padding: 12px 24px;
+  border: none;
+  border-radius: 5px;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.form-navigation button[type="button"] {
+  background-color: #e0e0e0;
+  color: #333;
+}
+
+.form-navigation button[type="submit"] {
+  background-color: #4CAF50;
+  color: white;
+}
+
+.form-navigation button:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .profile-split-layout {
+    flex-direction: column;
+  }
+
+  .profile-hero {
+    min-height: 30vh;
+  }
+
+  .profile-form-container {
+    padding: 1rem;
+  }
+
+  .form-step-section {
+    padding: 1rem;
+  }
 }
