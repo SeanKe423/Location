@@ -18,6 +18,13 @@ const Login = () => {
     }
   }, [navigate]);
 
+  useEffect(() => {
+    // Clear any existing tokens on component mount
+    localStorage.removeItem('token');
+    localStorage.removeItem('role');
+    localStorage.removeItem('userId');
+  }, []);
+
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
@@ -38,23 +45,10 @@ const Login = () => {
       const token = `Bearer ${res.data.token}`;
       localStorage.setItem("token", token);
       localStorage.setItem("role", res.data.role);
-      
-      // Check if user has completed profile
-      try {
-        const profileRes = await axios.get(
-          'http://localhost:5000/api/auth/user-profile',
-          {
-            headers: { 'Authorization': token }
-          }
-        );
-        
-        if (profileRes.data.profileCompleted) {
-          navigate("/dashboard");
-        } else {
-          navigate(res.data.role === "counselor" ? "/counselor-profile" : "/user-profile");
-        }
-      } catch (error) {
-        // If profile check fails, assume profile not completed
+
+      if (res.data.profileCompleted) {
+        navigate("/dashboard");
+      } else {
         navigate(res.data.role === "counselor" ? "/counselor-profile" : "/user-profile");
       }
     } catch (error) {

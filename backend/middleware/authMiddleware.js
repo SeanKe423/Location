@@ -16,6 +16,11 @@ const authMiddleware = async (req, res, next) => {
       // Verify token
       const decoded = jwt.verify(token, process.env.JWT_SECRET);
       
+      // Check if token is expired
+      if (decoded.exp < Date.now() / 1000) {
+        return res.status(401).json({ message: "Token has expired" });
+      }
+      
       // Add user from payload
       req.user = decoded;
       
@@ -24,7 +29,7 @@ const authMiddleware = async (req, res, next) => {
       next();
     } catch (error) {
       console.error("Token verification failed:", error); // Debug log
-      return res.status(403).json({ message: "Token is not valid" });
+      return res.status(401).json({ message: "Token is not valid" });
     }
   } catch (error) {
     console.error("Auth middleware error:", error); // Debug log

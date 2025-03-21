@@ -781,7 +781,7 @@ opacity: 1;
 .profile-hero {
   flex: 1;
   background: linear-gradient(rgba(0, 0, 0, 0.3), rgba(0, 0, 0, 0.3)), 
-              url('./tp.jpeg');
+              url('./hannah.jpg');
   background-size: cover;
   background-position: center;
   display: flex;

@@ -13,21 +13,18 @@ const LandingPage = () => {
 
       try {
         // Verify token validity with backend
-        const response = await axios.get('http://localhost:5000/api/auth/verify-token', {
-          headers: { 'Authorization': `Bearer ${token}` }
+        await axios.get('http://localhost:5000/api/auth/verify-token', {
+          headers: { 'Authorization': token }
         });
         
-        if (response.data.valid) {
-          navigate('/dashboard');
-        } else {
-          // Clear invalid token
-          localStorage.removeItem('token');
-          localStorage.removeItem('role');
-        }
+        // If we get here, token is valid
+        navigate('/dashboard');
       } catch (error) {
-        // Token is invalid or expired
+        // Token is invalid or expired - clear all auth data
+        console.log('Invalid token, clearing storage');
         localStorage.removeItem('token');
         localStorage.removeItem('role');
+        localStorage.removeItem('userId');
       }
     };
 
