@@ -781,13 +781,13 @@ opacity: 1;
 .profile-hero {
   flex: 1;
   background: linear-gradient(rgba(0, 0, 0, 0.3), rgba(0, 0, 0, 0.3)), 
-              url('C:\Users\USER\OneDrive\Desktop\CCon\frontend\src\loginuser.jpg');
+              url('./tp.jpeg');
   background-size: cover;
   background-position: center;
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 2rem;
+  position: relative;
 }
 
 .profile-form-container {

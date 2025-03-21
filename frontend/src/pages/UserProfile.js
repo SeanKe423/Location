@@ -296,8 +296,7 @@ const UserProfile = () => {
     <div className="auth-container">
       <div className="auth-split-layout">
         {/* Left side - Hero section */}
-        <div className="auth-hero">
-          <img src={signupImage} alt="Support and Connection" />
+        <div className="auth-hero profile-hero">
           <div className="auth-hero-content">
             <h1>Complete Your Profile</h1>
             <p>Help us understand you better to provide the best possible support</p>
