@@ -339,6 +339,16 @@ h2 {
   padding: 1rem;
 }
 
+/*auth-form content user-profile*/
+.user-p {
+  width: 100%;
+  max-width: 600px;
+  margin: 0 auto;
+  padding: 1rem;
+
+}
+
+
 .form-step-section {
   max-width: 400px;
   margin: 0 auto;
@@ -943,7 +953,7 @@ input[type="text"]:focus {
   box-shadow: 0 8px 32px rgba(31, 38, 135, 0.1);
   transition: all 0.3s ease;
   max-width: 1000px;
-  width:450px;
+  width:500px;
 }
 
 .auth-form.user-profile-form .form-questions {
@@ -952,6 +962,7 @@ input[type="text"]:focus {
   padding: 2rem;
   margin: 1rem 0;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+  width: 400px;
 }
 
 .auth-form.user-profile-form .radio-group,
@@ -1079,4 +1090,9 @@ input[type="text"]:focus {
   background: #4CAF50;
   transform: scale(1.3);
   box-shadow: 0 0 0 4px rgba(76, 175, 80, 0.2);
+}
+
+/*Change width of 'other languages' text in user profile creation*/
+.userlang{
+width: 300px !important;
 }

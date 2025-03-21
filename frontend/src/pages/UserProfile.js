@@ -163,6 +163,7 @@ const UserProfile = () => {
                   </div>
                 ))}
                 <input
+                  className='userlang'
                   type="text"
                   name="otherLanguage"
                   placeholder="Other Languages"
@@ -305,7 +306,7 @@ const UserProfile = () => {
 
         {/* Right side - Profile Form */}
         <div className="auth-form-container right-profile">
-          <div className="auth-form-content">
+          <div className="auth-form-content user-p">
             <h2>Your Preferences</h2>
             <div className="progress-indicator">
               {[1, 2].map((dotStep) => (
