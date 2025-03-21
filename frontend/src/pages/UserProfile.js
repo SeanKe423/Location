@@ -304,7 +304,7 @@ const UserProfile = () => {
         </div>
 
         {/* Right side - Profile Form */}
-        <div className="auth-form-container">
+        <div className="auth-form-container right-profile">
           <div className="auth-form-content">
             <h2>Your Preferences</h2>
             <div className="progress-indicator">
