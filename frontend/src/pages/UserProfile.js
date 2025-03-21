@@ -45,57 +45,68 @@ const UserProfile = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     
-    // Validate required fields
-    if (!formData.ageGroup || !formData.gender || formData.languages.length === 0) {
-      alert('Please complete all required fields in Basic Information');
-      setStep(1);
-      return;
-    }
-
-    if (!formData.counselingTypes.length || !formData.currentIssues.length || 
-        !formData.severityLevel || !formData.counselorGenderPreference) {
-      alert('Please complete all required fields in Counseling Needs');
+    // Validate current step only
+    if (step === 1) {
+      if (!formData.ageGroup || !formData.gender || formData.languages.length === 0) {
+        alert('Please complete all required fields in Basic Information');
+        return;
+      }
+      // If step 1 is valid, move to step 2
       setStep(2);
       return;
     }
 
-    try {
-      const token = localStorage.getItem('token');
-      
-      if (!token) {
-        alert('Please login first');
-        navigate('/login');
+    // Only validate step 2 fields when actually submitting
+    if (step === 2) {
+      if (!formData.counselingTypes.length || !formData.currentIssues.length || 
+          !formData.severityLevel || !formData.counselorGenderPreference) {
+        alert('Please complete all required fields in Counseling Needs');
         return;
       }
 
-      // Create the complete profile data
-      const profileData = {
-        ...formData,
-        profileCompleted: true // Mark profile as completed
-      };
-
-      const response = await axios.post(
-        'http://localhost:5000/api/auth/create-user-profile',
-        profileData,
-        {
-          headers: { 
-            'Authorization': `Bearer ${token}`,
-            'Content-Type': 'application/json'
-          }
+      try {
+        const token = localStorage.getItem('token');
+        
+        if (!token) {
+          alert('Please login first');
+          navigate('/login');
+          return;
         }
-      );
 
-      if (response.data) {
-        alert('Profile created successfully!');
-        navigate('/dashboard');
+        // Create the complete profile data
+        const profileData = {
+          ...formData,
+          profileCompleted: true
+        };
+
+        const response = await axios.post(
+          'http://localhost:5000/api/auth/create-user-profile',
+          profileData,
+          {
+            headers: { 
+              'Authorization': token,
+              'Content-Type': 'application/json'
+            }
+          }
+        );
+
+        if (response.data) {
+          alert('Profile created successfully!');
+          navigate('/dashboard');
+        }
+      } catch (error) {
+        console.error('Profile creation error:', error.response || error);
+        alert(error.response?.data?.message || 'Profile creation failed');
       }
-    } catch (error) {
-      console.error('Profile creation error:', error.response || error);
-      alert(error.response?.data?.message || 'Profile creation failed');
     }
   };
 
-  const nextStep = () => setStep(prev => prev + 1);
+  const nextStep = () => {
+    if (step === 1) {
+      handleSubmit({ preventDefault: () => {} }); // This will handle validation and step progression
+    }
+  };
+
   const prevStep = () => setStep(prev => prev - 1);
 
   const renderStep = () => {
