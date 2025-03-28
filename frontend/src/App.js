@@ -9,6 +9,7 @@ import CounselorProfile from "./pages/CounselorProfile";
 import EditUserProfile from './pages/EditUserProfile';
 import EditCounselorProfile from './pages/EditCounselorProfile';
 import Dashboard from './pages/Dashboard';
+import Matchmaking from './pages/Matchmaking';
 import "./App.css";
 
 const App = () => {
@@ -47,6 +48,7 @@ const App = () => {
               <EditCounselorProfile />
             </PrivateRoute>
           } />
+          <Route path="/matchmaking" element={<Matchmaking />} />
 
           {/* Catch all undefined routes and redirect to landing page */}
           <Route path="*" element={<Navigate to="/" replace />} />

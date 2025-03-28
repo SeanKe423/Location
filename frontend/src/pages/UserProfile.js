@@ -92,7 +92,7 @@ const UserProfile = () => {
 
         if (response.data) {
           alert('Profile created successfully!');
-          navigate('/dashboard');
+          navigate('/matchmaking');
         }
       } catch (error) {
         console.error('Profile creation error:', error.response || error);

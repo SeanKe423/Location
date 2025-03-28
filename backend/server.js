@@ -10,6 +10,7 @@ const fs = require("fs");
 dotenv.config();
 
 const authRoutes = require("./routes/auth"); // Import auth routes
+const matchingRoutes = require("./routes/matching"); // Add this line
 
 const app = express();
 
@@ -33,6 +34,7 @@ mongoose.connect(process.env.MONGO_URI)
 
 // Routes
 app.use("/api/auth", authRoutes); // Ensure this is present
+app.use("/api/matching", matchingRoutes); // Add this line
 
 // Add debug route to test API
 app.get('/api/test', (req, res) => {

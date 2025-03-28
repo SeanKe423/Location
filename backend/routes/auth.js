@@ -260,4 +260,34 @@ router.get("/verify-token", authMiddleware, (req, res) => {
   res.json({ valid: true });
 });
 
+// Add this route temporarily for testing
+router.post('/create-test-counselor', async (req, res) => {
+  try {
+    const testCounselor = new Counselor({
+      email: 'test.counselor@example.com',
+      password: await bcrypt.hash('password123', 10),
+      fullName: 'Test Counselor',
+      phoneNumber: '1234567890',
+      gender: 'female',
+      languages: ['English', 'Swahili'],
+      education: 'masters',
+      cpbNumber: 'CPB123',
+      yearsExperience: '4-6',
+      specializations: [
+        'General Mental Health',
+        'Relationship/Marital Counselling',
+        'Family Counselling'
+      ],
+      profileCompleted: true,
+      isVerified: true
+    });
+
+    await testCounselor.save();
+    res.json({ message: 'Test counselor created', counselor: testCounselor });
+  } catch (error) {
+    console.error('Error creating test counselor:', error);
+    res.status(500).json({ message: 'Error creating test counselor', error: error.message });
+  }
+});
+
 module.exports = router;

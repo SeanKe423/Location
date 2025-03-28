@@ -966,46 +966,61 @@ input[type="text"]:focus {
 
 /* Add or update these styles */
 .auth-form.user-profile-form {
-  background: rgba(255, 255, 255, 0.95);
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.95), rgba(240, 248, 255, 0.95));
   padding: 2rem;
   border-radius: 15px;
-  box-shadow: 0 8px 32px rgba(31, 38, 135, 0.1);
+  box-shadow: 0 8px 32px rgba(31, 38, 135, 0.15);
   transition: all 0.3s ease;
   max-width: 1000px;
-  width:500px;
+  width: 500px;
+  border: 1px solid rgba(76, 175, 80, 0.2);
 }
 
 .auth-form.user-profile-form .form-questions {
-  background: #f8f9fa;
+  background: linear-gradient(to bottom right, #ffffff, #f0f8ff);
   border-radius: 12px;
   padding: 2rem;
   margin: 1rem 0;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
   width: 400px;
+  border: 1px solid rgba(76, 175, 80, 0.1);
 }
 
+/*User profile cretion form radio groups*/
 .auth-form.user-profile-form .radio-group,
 .auth-form.user-profile-form .checkbox-group {
-  background: white;
+  background: rgba(255, 255, 255, 0.9);
   padding: 1.5rem;
   border-radius: 10px;
   margin-bottom: 2rem;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.03);
+  border-left: 4px solid black;
+  transition: all 0.3s ease;
+}
+
+.auth-form.user-profile-form .radio-group:hover,
+.auth-form.user-profile-form .checkbox-group:hover {
+  background: linear-gradient(145deg, #ffffff, #f8fff8);
+  box-shadow: 0 4px 15px rgba(76, 175, 80, 0.1);
 }
 
 .auth-form.user-profile-form .radio-group > label,
 .auth-form.user-profile-form .checkbox-group > label {
-  color: #2c3e50;
+  color: #1e4620;
   font-size: 1.3rem;
   font-weight: 600;
   margin-bottom: 1.5rem;
-  border-bottom: 2px solid #e0e0e0;
+  border-bottom: 2px solid #4CAF50;
   padding-bottom: 0.5rem;
+  text-shadow: 1px 1px 1px rgba(255, 255, 255, 0.5);
+  /*background: linear-gradient(120deg, #2c3e50, #1e4620);*/
+  /*-webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;*/
 }
 
 .auth-form.user-profile-form .radio-group div,
 .auth-form.user-profile-form .checkbox-group div {
-  background: #f8f9fa;
+  background: #f0f9f0;
   padding: 1rem;
   border-radius: 8px;
   margin: 0.8rem 0;
@@ -1018,7 +1033,7 @@ input[type="text"]:focus {
   background: #ffffff;
   border-color: #4CAF50;
   transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(76, 175, 80, 0.1);
+  box-shadow: 0 4px 12px rgba(76, 175, 80, 0.2);
 }
 
 .auth-form.user-profile-form input[type="radio"],
@@ -1031,8 +1046,8 @@ input[type="text"]:focus {
 }
 
 .auth-form.user-profile-form input[type="text"] {
-  background: white;
-  border: 2px solid #e0e0e0;
+  background: #ffffff;
+  border: 2px solid #a5d6a7;
   padding: 12px 16px;
   border-radius: 8px;
   font-size: 1rem;
@@ -1041,72 +1056,77 @@ input[type="text"]:focus {
 
 .auth-form.user-profile-form input[type="text"]:focus {
   border-color: #4CAF50;
-  box-shadow: 0 0 0 3px rgba(76, 175, 80, 0.1);
+  box-shadow: 0 0 0 3px rgba(76, 175, 80, 0.2);
+  background: #f8fff8;
 }
 
+/* Enhanced navigation buttons */
 .auth-form.user-profile-form .form-navigation {
   margin-top: 2.5rem;
-  gap: 1rem;
+  gap: 1.5rem;
+  display: flex;
+  justify-content: space-between;
 }
 
 .auth-form.user-profile-form .form-navigation button {
   padding: 1rem 2rem;
-  border-radius: 8px;
+  border-radius: 25px;
   font-weight: 600;
   letter-spacing: 0.5px;
   transition: all 0.3s ease;
+  text-transform: uppercase;
+  font-size: 1rem;
 }
 
 .auth-form.user-profile-form .form-navigation button[type="button"] {
-  background: #f1f1f1;
-  color: #333;
-  border: 2px solid #e0e0e0;
+  background: white;
+  color: #4CAF50;
+  border: 2px solid #4CAF50;
+  box-shadow: 0 2px 10px rgba(76, 175, 80, 0.1);
 }
 
 .auth-form.user-profile-form .form-navigation button[type="submit"] {
-  background: #4CAF50;
+  background: linear-gradient(45deg, #4CAF50, #45a049);
   color: white;
   border: none;
+  box-shadow: 0 2px 10px rgba(76, 175, 80, 0.2);
 }
 
 .auth-form.user-profile-form .form-navigation button:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  transform: translateY(-3px);
+  box-shadow: 0 5px 15px rgba(76, 175, 80, 0.3);
+  animation: pulse 1s infinite;
 }
 
-/* Add animation for step transitions */
-.form-step-section {
-  animation: fadeIn 0.5s ease;
+.auth-form.user-profile-form .form-navigation button[type="button"]:hover {
+  background: #4CAF50;
+  color: white;
 }
 
-@keyframes fadeIn {
-  from {
-    opacity: 0;
-    transform: translateY(10px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
+/*user profile creation form styling*/
+/* Enhanced step section header */
+.auth-form.user-profile-form .form-step-section h3 {
+  color: black;
+  font-size: 1.8rem;
+  margin-bottom: 2rem;
+  text-align: center;
+  font-weight: 600;
+  /*background: linear-gradient(120deg, #2c3e50, #4CAF50);*/
+  /*-webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;*/
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
 }
 
-/* Progress indicator enhancement */
-.progress-indicator {
-  margin: 2rem 0;
-  padding: 1rem;
-}
-
-.step-dot {
+/* Enhanced progress indicator */
+.auth-form.user-profile-form .progress-indicator .step-dot {
+  background: #a5d6a7;
   width: 15px;
   height: 15px;
-  background: #e0e0e0;
-  border-radius: 50%;
-  transition: all 0.3s ease;
-  position: relative;
+  transition: all 0.4s ease;
 }
 
-.step-dot.active {
-  background: #4CAF50;
+.auth-form.user-profile-form .progress-indicator .step-dot.active {
+  background: linear-gradient(145deg, #4CAF50, #45a049);
   transform: scale(1.3);
   box-shadow: 0 0 0 4px rgba(76, 175, 80, 0.2);
 }
@@ -1126,51 +1146,55 @@ width: 300px !important;
 width:275px !important;
 }
 
-/* Counselor Profile Form Styles - Enhanced */
+/* Counselor Profile Form Styles - Enhanced with more color */
 .auth-form.counselor-form {
-  background: rgba(255, 255, 255, 0.95);
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.95), rgba(240, 248, 255, 0.95));
   padding: 2rem;
   border-radius: 15px;
-  box-shadow: 0 8px 32px rgba(31, 38, 135, 0.1);
+  box-shadow: 0 8px 32px rgba(31, 38, 135, 0.15);
   transition: all 0.3s ease;
   max-width: 1000px;
   width: 450px !important;
-
+  border: 1px solid rgba(76, 175, 80, 0.2);
 }
 
 .auth-form.counselor-form .form-questions {
-  background: #f8f9fa;
+  background: linear-gradient(to bottom right, #ffffff, #f0f8ff);
   border-radius: 12px;
   padding: 2rem;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
-  margin: 1rem 0; /* Centers horizontally */
-  width: 350px; /* Adjust width as needed */
-  max-width: 1000px; /* Prevents it from becoming too wide */
+  margin: 1rem 0;
+  width: 350px;
+  max-width: 1000px;
   text-align: center;
+  border: 1px solid rgba(76, 175, 80, 0.1);
 }
 
+/*Counselor form radio groups*/
 .auth-form.counselor-form .radio-group,
 .auth-form.counselor-form .checkbox-group {
-  background: white;
+  background: rgba(255, 255, 255, 0.9);
   padding: 1.5rem;
   border-radius: 10px;
   margin-bottom: 2rem;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.03);
+  border-left: 4px solid black;
 }
 
 .auth-form.counselor-form .radio-group > label,
 .auth-form.counselor-form .checkbox-group > label {
-  color: #2c3e50;
+  color: #1e4620; /* Darker green for better contrast */
   font-size: 1.3rem;
   font-weight: 600;
   margin-bottom: 1.5rem;
-  border-bottom: 2px solid #e0e0e0;
+  border-bottom: 2px solid #4CAF50;
   padding-bottom: 0.5rem;
+  text-shadow: 1px 1px 1px rgba(255, 255, 255, 0.5);
 }
 
 .auth-form.counselor-form .radio-group div,
 .auth-form.counselor-form .checkbox-group div {
-  background: #f8f9fa;
+  background: #f0f9f0; /* Light green background */
   padding: 1rem;
   border-radius: 8px;
   margin: 0.8rem 0;
@@ -1183,16 +1207,7 @@ width:275px !important;
   background: #ffffff;
   border-color: #4CAF50;
   transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(76, 175, 80, 0.1);
-}
-
-.auth-form.counselor-form input[type="radio"],
-.auth-form.counselor-form input[type="checkbox"] {
-  width: 20px;
-  height: 20px;
-  margin-right: 15px;
-  accent-color: #4CAF50;
-  cursor: pointer;
+  box-shadow: 0 4px 12px rgba(76, 175, 80, 0.2);
 }
 
 .auth-form.counselor-form input[type="text"],
@@ -1200,8 +1215,8 @@ width:275px !important;
 .auth-form.counselor-form input[type="tel"],
 .auth-form.counselor-form select,
 .auth-form.counselor-form textarea {
-  background: white;
-  border: 2px solid #e0e0e0;
+  background: #ffffff;
+  border: 2px solid #a5d6a7; /* Light green border */
   padding: 12px 16px;
   border-radius: 8px;
   font-size: 1rem;
@@ -1214,81 +1229,315 @@ width:275px !important;
 .auth-form.counselor-form select:focus,
 .auth-form.counselor-form textarea:focus {
   border-color: #4CAF50;
-  box-shadow: 0 0 0 3px rgba(76, 175, 80, 0.1);
+  box-shadow: 0 0 0 3px rgba(76, 175, 80, 0.2);
   outline: none;
-}
-
-.auth-form.counselor-form textarea {
-  min-height: 100px;
-  resize: vertical;
+  background: #f8fff8; /* Very light green background when focused */
 }
 
 .auth-form.counselor-form .file-upload {
-  background: #f8f9fa;
+  background: linear-gradient(145deg, #e9f9e9, #ffffff);
   padding: 1.5rem;
   border-radius: 10px;
   margin: 1rem 0;
   border: 2px dashed #4CAF50;
+  transition: all 0.3s ease;
 }
 
 .auth-form.counselor-form .file-upload:hover {
   background: #ffffff;
   border-color: #45a049;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(76, 175, 80, 0.15);
 }
 
 .auth-form.counselor-form .terms-checkbox {
-  background: #f8f9fa;
+  background: linear-gradient(145deg, #f0f9f0, #ffffff);
   padding: 1rem;
   border-radius: 8px;
   margin: 1rem 0;
   display: flex;
   align-items: center;
   gap: 1rem;
+  border-left: 4px solid #4CAF50;
 }
 
+/* Enhanced step section header */
+.auth-form.counselor-form .form-step-section h3 {
+  color: black;
+  font-size: 1.8rem;
+  margin-bottom: 2rem;
+  text-align: center;
+  font-weight: 600;
+  /*background: linear-gradient(120deg, #4CAF50, #45a049);*/
+  -webkit-background-clip: text;
+ /* -webkit-text-fill-color: transparent;*/
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+/* Progress indicator enhancement */
+.auth-form.counselor-form .progress-indicator .step-dot {
+  background: #a5d6a7; /* Light green for inactive dots */
+}
+
+.auth-form.counselor-form .progress-indicator .step-dot.active {
+  background: linear-gradient(145deg, #4CAF50, #45a049);
+  transform: scale(1.3);
+  box-shadow: 0 0 0 4px rgba(76, 175, 80, 0.2);
+}
+
+/* Enhanced Navigation buttons for counselor profile creation form */
 .auth-form.counselor-form .form-navigation {
   margin-top: 2.5rem;
-  gap: 1rem;
+  gap: 1.5rem;
   display: flex;
   justify-content: space-between;
 }
 
 .auth-form.counselor-form .form-navigation button {
   padding: 1rem 2rem;
-  border-radius: 8px;
+  border-radius: 25px;
   font-weight: 600;
   letter-spacing: 0.5px;
   transition: all 0.3s ease;
-  flex: 1;
+  text-transform: uppercase;
+  font-size: 1rem;
 }
 
 .auth-form.counselor-form .form-navigation button[type="button"] {
-  background: #f1f1f1;
-  color: #333;
-  border: 2px solid #e0e0e0;
+  background: white;
+  color: #4CAF50;
+  border: 2px solid #4CAF50;
+  box-shadow: 0 2px 10px rgba(76, 175, 80, 0.1);
 }
 
 .auth-form.counselor-form .form-navigation button[type="submit"] {
+  background: linear-gradient(45deg, #4CAF50, #45a049);
+  color: white;
+  border: none;
+  box-shadow: 0 2px 10px rgba(76, 175, 80, 0.2);
+}
+
+.auth-form.counselor-form .form-navigation button:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 5px 15px rgba(76, 175, 80, 0.3);
+  animation: pulse 1s infinite;
+}
+
+.auth-form.counselor-form .form-navigation button[type="button"]:hover {
   background: #4CAF50;
+  color: white;
+}
+
+/* Disabled button state */
+.auth-form.counselor-form .form-navigation button:disabled {
+  background: #cccccc;
+  cursor: not-allowed;
+  transform: none;
+  box-shadow: none;
+}
+
+/* Matchmaking Styles */
+.matchmaking-container {
+  padding: 2rem;
+  max-width: 1200px;
+  margin: 0 auto;
+  background: #f8f9fa;
+  min-height: 100vh;
+}
+
+.matchmaking-header {
+  text-align: center;
+  margin-bottom: 3rem;
+}
+
+.matchmaking-header h2 {
+  color: #2c3e50;
+  font-size: 2.5rem;
+  margin-bottom: 0.5rem;
+}
+
+.subtitle {
+  color: #666;
+  font-size: 1.1rem;
+}
+
+.matches-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  gap: 2rem;
+  padding: 1rem;
+}
+
+.match-card {
+  background: white;
+  border-radius: 20px;
+  padding: 1.5rem;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  transition: all 0.3s ease;
+  border: 1px solid #eee;
+}
+
+.match-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 8px 15px rgba(0, 0, 0, 0.1);
+}
+
+.match-header {
+  text-align: center;
+  margin-bottom: 1.5rem;
+  padding-bottom: 1rem;
+  border-bottom: 1px solid #eee;
+}
+
+.match-score {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-bottom: 1rem;
+}
+
+.score-label {
+  font-size: 0.9rem;
+  color: #666;
+  margin-bottom: 0.3rem;
+}
+
+.score-value {
+  font-size: 1.8rem;
+  font-weight: 700;
+  color: #4CAF50;
+}
+
+.counselor-name {
+  color: #2c3e50;
+  font-size: 1.4rem;
+  margin: 0;
+}
+
+.match-section {
+  margin-bottom: 1.5rem;
+}
+
+.match-section h4 {
+  color: #2c3e50;
+  font-size: 1.1rem;
+  margin-bottom: 0.8rem;
+}
+
+.tags-container {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.specialty-tag, .language-tag {
+  padding: 0.4rem 0.8rem;
+  border-radius: 15px;
+  font-size: 0.9rem;
+  font-weight: 500;
+}
+
+.specialty-tag {
+  background: #e8f5e9;
+  color: #2e7d32;
+}
+
+.language-tag {
+  background: #e3f2fd;
+  color: #1565c0;
+}
+
+.match-criteria {
+  background: #f8f9fa;
+  padding: 1rem;
+  border-radius: 12px;
+  margin: 1.5rem 0;
+}
+
+.criteria-item {
+  margin-bottom: 0.8rem;
+}
+
+.criteria-item span {
+  display: block;
+  font-size: 0.9rem;
+  color: #666;
+  margin-bottom: 0.3rem;
+}
+
+.progress-bar {
+  height: 8px;
+  background: #e0e0e0;
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+.progress {
+  height: 100%;
+  background: linear-gradient(45deg, #4CAF50, #45a049);
+  border-radius: 4px;
+  transition: width 0.3s ease;
+}
+
+.match-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 0.8rem;
+  margin-top: 1.5rem;
+}
+
+.accept-button, .reject-button {
+  padding: 0.8rem;
+  border-radius: 25px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  font-size: 0.9rem;
+}
+
+.accept-button {
+  background: linear-gradient(45deg, #4CAF50, #45a049);
   color: white;
   border: none;
 }
 
-.auth-form.counselor-form .form-navigation button:hover {
+.reject-button {
+  background: white;
+  color: #dc3545;
+  border: 2px solid #dc3545;
+}
+
+.accept-button:hover {
+  background: linear-gradient(45deg, #45a049, #4CAF50);
   transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  box-shadow: 0 4px 12px rgba(76, 175, 80, 0.2);
 }
 
-/* Enhanced step section for counselor form */
-.auth-form.counselor-form .form-step-section {
-  animation: fadeIn 0.5s ease;
-  max-width: 100%;
+.reject-button:hover {
+  background: #dc3545;
+  color: white;
+  transform: translateY(-2px);
 }
 
-.auth-form.counselor-form .form-step-section h3 {
-  color: #2c3e50;
-  font-size: 1.8rem;
-  margin-bottom: 2rem;
+/* Loading State */
+.loading-state {
   text-align: center;
-  font-weight: 600;
+  padding: 3rem;
+}
+
+.loading-spinner {
+  border: 4px solid #f3f3f3;
+  border-top: 4px solid #4CAF50;
+  border-radius: 50%;
+  width: 40px;
+  height: 40px;
+  animation: spin 1s linear infinite;
+  margin: 0 auto 1rem;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
 }
