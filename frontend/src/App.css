@@ -319,6 +319,7 @@ h2 {
   height: 100vh; /* Match parent height */
 }
 
+
 /*auth-form-container right-user-profile*/
 .right-profile {
   flex: 1;
@@ -329,7 +330,6 @@ h2 {
   overflow-y: auto; /* Allow scrolling within the form container */
   height: 100vh; /* Match parent height */
 }
-
 
 
 .auth-form-content {
@@ -348,7 +348,16 @@ h2 {
 
 }
 
+/*auth-form content counselor-profile*/
+.counselor{
+  width: 100%;
+  max-width: 500px;
+  margin: 0 auto;
+  padding: 1rem;
+  
+}
 
+/*user profile form-step-section*/
 .form-step-section {
   max-width: 400px;
   margin: 0 auto;
@@ -761,7 +770,15 @@ opacity: 1;
 }
 
 .counselor-form .form-step-section {
-  margin-bottom: 2rem;
+  margin: 0rem auto;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  width: 80%;
+max-width: 1000px;
+/*background-color: #404040;*/
 }
 
 .counselor-form .form-navigation {
@@ -774,6 +791,7 @@ opacity: 1;
 .counselor-form .form-navigation button {
   flex: 1;
 }
+
 
 /* Responsive styles */
 @media (max-width: 768px) {
@@ -821,6 +839,7 @@ opacity: 1;
   max-height: 100vh;
 }
 
+/*user-profile*/
 .form-step-section {
   max-width: 800px;
   margin: 0 auto;
@@ -1095,4 +1114,181 @@ input[type="text"]:focus {
 /*Change width of 'other languages' text in user profile creation*/
 .userlang{
 width: 300px !important;
+}
+
+/*Change width of text elements in counselor profile creation*/
+.counseltext{
+  width: 300px !important;
+}
+
+/*Change width of 'other languages' text in counselor profile creation*/
+.ol{
+width:275px !important;
+}
+
+/* Counselor Profile Form Styles - Enhanced */
+.auth-form.counselor-form {
+  background: rgba(255, 255, 255, 0.95);
+  padding: 2rem;
+  border-radius: 15px;
+  box-shadow: 0 8px 32px rgba(31, 38, 135, 0.1);
+  transition: all 0.3s ease;
+  max-width: 1000px;
+  width: 450px !important;
+
+}
+
+.auth-form.counselor-form .form-questions {
+  background: #f8f9fa;
+  border-radius: 12px;
+  padding: 2rem;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+  margin: 1rem 0; /* Centers horizontally */
+  width: 350px; /* Adjust width as needed */
+  max-width: 1000px; /* Prevents it from becoming too wide */
+  text-align: center;
+}
+
+.auth-form.counselor-form .radio-group,
+.auth-form.counselor-form .checkbox-group {
+  background: white;
+  padding: 1.5rem;
+  border-radius: 10px;
+  margin-bottom: 2rem;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.03);
+}
+
+.auth-form.counselor-form .radio-group > label,
+.auth-form.counselor-form .checkbox-group > label {
+  color: #2c3e50;
+  font-size: 1.3rem;
+  font-weight: 600;
+  margin-bottom: 1.5rem;
+  border-bottom: 2px solid #e0e0e0;
+  padding-bottom: 0.5rem;
+}
+
+.auth-form.counselor-form .radio-group div,
+.auth-form.counselor-form .checkbox-group div {
+  background: #f8f9fa;
+  padding: 1rem;
+  border-radius: 8px;
+  margin: 0.8rem 0;
+  transition: all 0.3s ease;
+  border: 1px solid transparent;
+}
+
+.auth-form.counselor-form .radio-group div:hover,
+.auth-form.counselor-form .checkbox-group div:hover {
+  background: #ffffff;
+  border-color: #4CAF50;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(76, 175, 80, 0.1);
+}
+
+.auth-form.counselor-form input[type="radio"],
+.auth-form.counselor-form input[type="checkbox"] {
+  width: 20px;
+  height: 20px;
+  margin-right: 15px;
+  accent-color: #4CAF50;
+  cursor: pointer;
+}
+
+.auth-form.counselor-form input[type="text"],
+.auth-form.counselor-form input[type="email"],
+.auth-form.counselor-form input[type="tel"],
+.auth-form.counselor-form select,
+.auth-form.counselor-form textarea {
+  background: white;
+  border: 2px solid #e0e0e0;
+  padding: 12px 16px;
+  border-radius: 8px;
+  font-size: 1rem;
+  transition: all 0.3s ease;
+  width: 100%;
+  margin-bottom: 1rem;
+}
+
+.auth-form.counselor-form input:focus,
+.auth-form.counselor-form select:focus,
+.auth-form.counselor-form textarea:focus {
+  border-color: #4CAF50;
+  box-shadow: 0 0 0 3px rgba(76, 175, 80, 0.1);
+  outline: none;
+}
+
+.auth-form.counselor-form textarea {
+  min-height: 100px;
+  resize: vertical;
+}
+
+.auth-form.counselor-form .file-upload {
+  background: #f8f9fa;
+  padding: 1.5rem;
+  border-radius: 10px;
+  margin: 1rem 0;
+  border: 2px dashed #4CAF50;
+}
+
+.auth-form.counselor-form .file-upload:hover {
+  background: #ffffff;
+  border-color: #45a049;
+}
+
+.auth-form.counselor-form .terms-checkbox {
+  background: #f8f9fa;
+  padding: 1rem;
+  border-radius: 8px;
+  margin: 1rem 0;
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.auth-form.counselor-form .form-navigation {
+  margin-top: 2.5rem;
+  gap: 1rem;
+  display: flex;
+  justify-content: space-between;
+}
+
+.auth-form.counselor-form .form-navigation button {
+  padding: 1rem 2rem;
+  border-radius: 8px;
+  font-weight: 600;
+  letter-spacing: 0.5px;
+  transition: all 0.3s ease;
+  flex: 1;
+}
+
+.auth-form.counselor-form .form-navigation button[type="button"] {
+  background: #f1f1f1;
+  color: #333;
+  border: 2px solid #e0e0e0;
+}
+
+.auth-form.counselor-form .form-navigation button[type="submit"] {
+  background: #4CAF50;
+  color: white;
+  border: none;
+}
+
+.auth-form.counselor-form .form-navigation button:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+/* Enhanced step section for counselor form */
+.auth-form.counselor-form .form-step-section {
+  animation: fadeIn 0.5s ease;
+  max-width: 100%;
+}
+
+.auth-form.counselor-form .form-step-section h3 {
+  color: #2c3e50;
+  font-size: 1.8rem;
+  margin-bottom: 2rem;
+  text-align: center;
+  font-weight: 600;
 }

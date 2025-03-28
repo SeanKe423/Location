@@ -7,9 +7,7 @@ import signupImage from '../signupuser.jpg'; // Update the image import
 const CounselorProfile = () => {
   const [step, setStep] = useState(1);
   const [formData, setFormData] = useState({
-    // Step 1: Basic Information
-    fullName: '',
-    email: '',
+    // Step 1: Basic Information (removed fullName and email)
     phoneNumber: '',
     gender: '',
     languages: [],
@@ -125,26 +123,8 @@ const CounselorProfile = () => {
           <section className="form-step-section">
             <h3>Step 1: Basic Information</h3>
             <div className="form-questions">
-              <div className="form-field">
-                <label>Full Name</label>
-                <input
-                  type="text"
-                  name="fullName"
-                  placeholder="Enter your full name"
-                  value={formData.fullName}
-                  onChange={handleChange}
-                  required
-                />
-              </div>
               <input
-                type="email"
-                name="email"
-                placeholder="Email Address"
-                value={formData.email}
-                onChange={handleChange}
-                required
-              />
-              <input
+                className='counseltext'
                 type="tel"
                 name="phoneNumber"
                 placeholder="Phone Number"
@@ -200,6 +180,7 @@ const CounselorProfile = () => {
                   <label>Swahili</label>
                 </div>
                 <input
+                  className='ol'
                   type="text"
                   name="otherLanguage"
                   placeholder="Other Languages"
@@ -227,6 +208,7 @@ const CounselorProfile = () => {
               
               {formData.education === 'other' && (
                 <input
+                  className='counseltext'
                   type="text"
                   name="otherEducation"
                   placeholder="Specify Other Education"
@@ -236,6 +218,7 @@ const CounselorProfile = () => {
               )}
 
               <input
+                className='counseltext'
                 type="text"
                 name="cpbNumber"
                 placeholder="CPB Number"
@@ -245,6 +228,7 @@ const CounselorProfile = () => {
               />
               
               <textarea
+                className='counseltext'
                 name="otherCertifications"
                 placeholder="Other Certifications"
                 value={formData.otherCertifications}
@@ -291,6 +275,7 @@ const CounselorProfile = () => {
                   </div>
                 ))}
                 <input
+                  className='ol'
                   type="text"
                   name="otherSpecialization"
                   placeholder="Other Specializations"
@@ -333,6 +318,7 @@ const CounselorProfile = () => {
               </div>
 
               <textarea
+                className='counseltext'
                 name="additionalComments"
                 placeholder="Additional Comments (Optional)"
                 value={formData.additionalComments}
@@ -361,7 +347,7 @@ const CounselorProfile = () => {
 
         {/* Right side - Profile Form */}
         <div className="auth-form-container">
-          <div className="auth-form-content">
+          <div className="auth-form-content counselor">
             <h2>Professional Details</h2>
             <div className="progress-indicator">
               {[1, 2, 3, 4].map((dotStep) => (
