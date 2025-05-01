@@ -92,7 +92,7 @@ h2 {
   display: flex;
   align-items: center;
   justify-content: center;
-  background: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), url('C:\Users\USER\OneDrive\Desktop\CCon\frontend\src\Signupdoc.jpg');
+  background: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), url('./Signupdoc.jpg');
   background-size: cover;
   background-position: center;
 }
@@ -368,7 +368,7 @@ h2 {
 .auth-hero {
   display: flex;
    background: linear-gradient(rgba(0, 0, 0, 0.3), rgba(0, 0, 0, 0.3)), 
-              url('C:\Users\USER\OneDrive\Desktop\CCon\frontend\src\Logindoc.jpg');
+              url('./Logindoc.jpg');
   background-size: cover;
   background-position: center;
   justify-content: center;
@@ -663,7 +663,7 @@ input[type="text"] {
 /* Add this new class for the signup hero section */
 .signup-hero {
   background: linear-gradient(rgba(0, 0, 0, 0.3), rgba(0, 0, 0, 0.3)), 
-              url('C:\Users\USER\OneDrive\Desktop\CCon\frontend\src\signupuser.jpg');
+              url('./signupuser.jpg');
   background-size: cover;
   background-position: center;
   justify-content: center;
