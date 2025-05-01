@@ -41,13 +41,12 @@ const Login = () => {
 
       console.log("Login response:", res.data);
 
-      // Store token with 'Bearer' prefix
-      const token = `Bearer ${res.data.token}`;
-      localStorage.setItem("token", token);
+      // Store token without 'Bearer' prefix
+      localStorage.setItem("token", res.data.token);
       localStorage.setItem("role", res.data.role);
 
       if (res.data.profileCompleted) {
-        navigate("/dashboard");
+        navigate("/matchmaking");
       } else {
         navigate(res.data.role === "counselor" ? "/counselor-profile" : "/user-profile");
       }

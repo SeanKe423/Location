@@ -15,6 +15,10 @@ const Matchmaking = () => {
   const fetchMatches = async () => {
     try {
       const token = localStorage.getItem('token');
+      if (!token) {
+        setError('Please login first');
+        return;
+      }
       const response = await axios.get('http://localhost:5000/api/matching/find-matches', {
         headers: { 
           'Authorization': `Bearer ${token}`
@@ -24,14 +28,22 @@ const Matchmaking = () => {
       setLoading(false);
     } catch (error) {
       console.error('Error fetching matches:', error);
-      setError('Error fetching matches');
+      setError('Error fetching matches. Please try again.');
       setLoading(false);
     }
   };
 
   const handleMatchAction = async (matchId, status) => {
+    if (!matchId) {
+      setError('Invalid match ID');
+      return;
+    }
     try {
       const token = localStorage.getItem('token');
+      if (!token) {
+        setError('You must be logged in to perform this action');
+        return;
+      }
       await axios.put(
         `http://localhost:5000/api/matching/match/${matchId}`,
         { status },
@@ -43,7 +55,8 @@ const Matchmaking = () => {
         'Match removed from your list');
       fetchMatches();
     } catch (error) {
-      setError('Error updating match status');
+      console.error('Error updating match status:', error);
+      setError('Error updating match status. Please try again.');
     }
   };
 
@@ -116,8 +129,8 @@ const Matchmaking = () => {
               <div className="match-section">
                 <h4>Expertise</h4>
                 <div className="tags-container">
-                  {match.counselorId?.specializations?.map(spec => (
-                    <span key={spec} className="specialty-tag">{spec}</span>
+                  {match.counselorId?.specializations?.map((spec, index) => (
+                    <span key={`${match._id}-spec-${index}`} className="specialty-tag">{spec}</span>
                   ))}
                 </div>
               </div>
@@ -125,8 +138,8 @@ const Matchmaking = () => {
               <div className="match-section">
                 <h4>Languages</h4>
                 <div className="tags-container">
-                  {match.counselorId?.languages?.map(lang => (
-                    <span key={lang} className="language-tag">{lang}</span>
+                  {match.counselorId?.languages?.map((lang, index) => (
+                    <span key={`${match._id}-lang-${index}`} className="language-tag">{lang}</span>
                   ))}
                 </div>
               </div>

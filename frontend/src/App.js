@@ -48,7 +48,11 @@ const App = () => {
               <EditCounselorProfile />
             </PrivateRoute>
           } />
-          <Route path="/matchmaking" element={<Matchmaking />} />
+          <Route path="/matchmaking" element={
+            <PrivateRoute>
+              <Matchmaking />
+            </PrivateRoute>
+          } />
 
           {/* Catch all undefined routes and redirect to landing page */}
           <Route path="*" element={<Navigate to="/" replace />} />
