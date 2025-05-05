@@ -1,8 +1,19 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import '../App.css';
 import signupImage from '../signupuser.jpg';
+import { MapContainer, TileLayer, Marker, useMapEvents } from 'react-leaflet';
+import 'leaflet/dist/leaflet.css';
+import L from 'leaflet';
+
+// Fix for default marker icon
+delete L.Icon.Default.prototype._getIconUrl;
+L.Icon.Default.mergeOptions({
+  iconRetinaUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-icon-2x.png',
+  iconUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-icon.png',
+  shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-shadow.png',
+});
 
 const UserProfile = () => {
   const [step, setStep] = useState(1);
@@ -19,7 +30,12 @@ const UserProfile = () => {
     currentIssues: [],
     otherIssue: '',
     severityLevel: '',
-    counselorGenderPreference: ''
+    counselorGenderPreference: '',
+
+    location: {
+      coordinates: [0, 0],
+      address: ''
+    }
   });
 
   const navigate = useNavigate();
@@ -109,6 +125,25 @@ const UserProfile = () => {
 
   const prevStep = () => setStep(prev => prev - 1);
 
+  const LocationMarker = () => {
+    const map = useMapEvents({
+      click(e) {
+        const { lat, lng } = e.latlng;
+        setFormData(prev => ({
+          ...prev,
+          location: {
+            ...prev.location,
+            coordinates: [lat, lng]
+          }
+        }));
+      }
+    });
+
+    return formData.location.coordinates[0] !== 0 ? (
+      <Marker position={formData.location.coordinates} />
+    ) : null;
+  };
+
   const renderStep = () => {
     switch(step) {
       case 1:
@@ -180,6 +215,37 @@ const UserProfile = () => {
                   placeholder="Other Languages"
                   value={formData.otherLanguage}
                   onChange={handleChange}
+                />
+              </div>
+
+              <div className="map-container">
+                <h4>Select your location</h4>
+                <p>Click on the map to mark your location</p>
+                <div style={{ height: '300px', width: '100%', marginBottom: '1rem' }}>
+                  <MapContainer
+                    center={[0, 0]}
+                    zoom={2}
+                    style={{ height: '100%', width: '100%' }}
+                  >
+                    <TileLayer
+                      url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+                      attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+                    />
+                    <LocationMarker />
+                  </MapContainer>
+                </div>
+                <input
+                  type="text"
+                  name="location.address"
+                  placeholder="Enter your address"
+                  value={formData.location.address}
+                  onChange={(e) => setFormData(prev => ({
+                    ...prev,
+                    location: {
+                      ...prev.location,
+                      address: e.target.value
+                    }
+                  }))}
                 />
               </div>
             </div>

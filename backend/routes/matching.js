@@ -62,4 +62,46 @@ router.put('/match/:matchId', authMiddleware, async (req, res) => {
   }
 });
 
+// Create a new match
+router.post('/create-match', authMiddleware, async (req, res) => {
+  try {
+    const { counselorId } = req.body;
+    const userId = req.user.id;
+
+    // Check if match already exists
+    const existingMatch = await Match.findOne({
+      userId,
+      counselorId,
+      status: { $ne: 'rejected' }
+    });
+
+    if (existingMatch) {
+      return res.status(400).json({ 
+        message: 'You already have a pending or accepted match with this counselor' 
+      });
+    }
+
+    const match = new Match({
+      userId,
+      counselorId,
+      status: 'pending',
+      matchScore: 0, // This will be calculated later
+      matchCriteria: {
+        languageMatch: 0,
+        specializationMatch: 0,
+        genderPreferenceMatch: 0
+      }
+    });
+
+    await match.save();
+    res.json(match);
+  } catch (error) {
+    console.error('Error creating match:', error);
+    res.status(500).json({ 
+      message: 'Error creating match', 
+      error: error.message 
+    });
+  }
+});
+
 module.exports = router; 

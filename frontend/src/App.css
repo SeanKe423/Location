@@ -1541,3 +1541,36 @@ width:275px !important;
   0% { transform: rotate(0deg); }
   100% { transform: rotate(360deg); }
 }
+
+.map-container {
+  margin: 1.5rem 0;
+  padding: 1rem;
+  background: white;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.map-container h4 {
+  color: #2c3e50;
+  margin-bottom: 0.5rem;
+}
+
+.map-container p {
+  color: #666;
+  font-size: 0.9rem;
+  margin-bottom: 1rem;
+}
+
+.map-container input[type="text"] {
+  width: 100%;
+  padding: 12px;
+  border: 2px solid #e0e0e0;
+  border-radius: 8px;
+  font-size: 1rem;
+  margin-top: 1rem;
+}
+
+.map-container input[type="text"]:focus {
+  border-color: #4CAF50;
+  outline: none;
+}

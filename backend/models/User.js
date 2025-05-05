@@ -82,6 +82,18 @@ const userSchema = new mongoose.Schema({
     type: String,
     enum: ['user', 'counselor'],
     default: 'user'
+  },
+  location: {
+    type: {
+      type: String,
+      enum: ['Point'],
+      default: 'Point'
+    },
+    coordinates: {
+      type: [Number],
+      default: [0, 0]
+    },
+    address: String
   }
 });
 
@@ -90,5 +102,8 @@ userSchema.pre('save', function(next) {
   this.updatedAt = Date.now();
   next();
 });
+
+// Add 2dsphere index for geospatial queries
+userSchema.index({ location: '2dsphere' });
 
 module.exports = mongoose.model('User', userSchema);

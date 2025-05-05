@@ -46,7 +46,7 @@ const Login = () => {
       localStorage.setItem("role", res.data.role);
 
       if (res.data.profileCompleted) {
-        navigate("/matchmaking");
+        navigate("/connection-requests");
       } else {
         navigate(res.data.role === "counselor" ? "/counselor-profile" : "/user-profile");
       }

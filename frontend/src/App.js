@@ -10,6 +10,7 @@ import EditUserProfile from './pages/EditUserProfile';
 import EditCounselorProfile from './pages/EditCounselorProfile';
 import Dashboard from './pages/Dashboard';
 import Matchmaking from './pages/Matchmaking';
+import ConnectionRequests from './pages/ConnectionRequests';
 import "./App.css";
 
 const App = () => {
@@ -51,6 +52,11 @@ const App = () => {
           <Route path="/matchmaking" element={
             <PrivateRoute>
               <Matchmaking />
+            </PrivateRoute>
+          } />
+          <Route path="/connection-requests" element={
+            <PrivateRoute>
+              <ConnectionRequests />
             </PrivateRoute>
           } />
 

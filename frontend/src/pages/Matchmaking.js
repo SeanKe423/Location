@@ -33,9 +33,9 @@ const Matchmaking = () => {
     }
   };
 
-  const handleMatchAction = async (matchId, status) => {
-    if (!matchId) {
-      setError('Invalid match ID');
+  const handleMatchAction = async (counselorId, status) => {
+    if (!counselorId) {
+      setError('Invalid counselor ID');
       return;
     }
     try {
@@ -44,11 +44,21 @@ const Matchmaking = () => {
         setError('You must be logged in to perform this action');
         return;
       }
+      
+      // First create a new match
+      const response = await axios.post(
+        'http://localhost:5000/api/matching/create-match',
+        { counselorId },
+        { headers: { Authorization: `Bearer ${token}` } }
+      );
+
+      // Then update its status
       await axios.put(
-        `http://localhost:5000/api/matching/match/${matchId}`,
+        `http://localhost:5000/api/matching/match/${response.data._id}`,
         { status },
         { headers: { Authorization: `Bearer ${token}` } }
       );
+
       // Show success message
       alert(status === 'accepted' ? 
         'Connection request sent to counselor!' : 
@@ -173,13 +183,13 @@ const Matchmaking = () => {
 
             <div className="match-actions">
               <button 
-                onClick={() => handleMatchAction(match._id, 'accepted')}
+                onClick={() => handleMatchAction(match.counselorId._id, 'accepted')}
                 className="accept-button"
               >
                 Connect with Counselor
               </button>
               <button 
-                onClick={() => handleMatchAction(match._id, 'rejected')}
+                onClick={() => handleMatchAction(match.counselorId._id, 'rejected')}
                 className="reject-button"
               >
                 Not Interested
