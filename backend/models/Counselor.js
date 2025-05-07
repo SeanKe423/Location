@@ -12,67 +12,101 @@ const counselorSchema = new mongoose.Schema({
     required: true
   },
   
-  // Profile fields
-  fullName: {
+  // Step 1: Institution Details
+  institutionName: {
     type: String,
-    required: false // Can be added during profile creation
+    required: true
+  },
+  registrationNumber: {
+    type: String,
+    required: true
+  },
+  yearsOfOperation: {
+    type: String,
+    enum: ['less1', '1-5', '6-10', '10+'],
+    required: true
+  },
+  institutionType: {
+    type: String,
+    enum: ['ngo', 'private', 'religious', 'university', 'government', 'other'],
+    required: true
+  },
+  otherInstitutionType: {
+    type: String
+  },
+
+  // Step 2: Location & Contact
+  location: {
+    coordinates: {
+      type: [Number], // [latitude, longitude]
+      required: true
+    },
+    address: {
+      type: String,
+      required: true
+    }
   },
   phoneNumber: {
     type: String,
-    required: false
+    required: true
   },
-  gender: {
+  website: {
+    type: String
+  },
+
+  // Step 3: Services Offered
+  counselingServices: [{
+    type: String
+  }],
+  otherCounselingService: {
+    type: String
+  },
+  targetAgeGroups: [{
     type: String,
-    enum: ['male', 'female'],
-    required: false
-  },
+    enum: ['children', 'adolescents', 'youngAdults', 'adults', 'seniors']
+  }],
   languages: [{
     type: String
   }],
   otherLanguage: {
     type: String
   },
-  
-  // Qualifications
-  education: {
+  virtualCounseling: {
     type: String,
-    enum: ['diploma', 'bachelors', 'masters', 'phd', 'other'],
-    required: false
+    enum: ['yes', 'no'],
+    required: true
   },
-  otherEducation: {
-    type: String
+
+  // Step 4: Staff & Capacity
+  numberOfCounselors: {
+    type: Number,
+    required: true,
+    min: 1
   },
-  cpbNumber: {
+  waitTime: {
     type: String,
-    required: false
+    enum: ['sameWeek', '1-2weeks', '3+weeks'],
+    required: true
   },
-  otherCertifications: {
-    type: String
-  },
-  yearsExperience: {
-    type: String,
-    enum: ['less1', '1-3', '4-6', '7+'],
-    required: false
-  },
-  
-  // Specializations
-  specializations: [{
-    type: String
-  }],
-  otherSpecialization: {
-    type: String
-  },
-  
-  // Verification
+
+  // Step 5: Ethics, Verification & Consent
   documents: {
     type: String // URL to uploaded document
   },
-  agreeToTerms: {
+  isLegallyRegistered: {
     type: Boolean,
-    default: false
+    default: false,
+    required: true
   },
-  additionalComments: {
-    type: String
+  upholdEthics: {
+    type: Boolean,
+    default: false,
+    required: true
+  },
+  consentToDisplay: {
+    type: Boolean,
+    default: false,
+    required: true
   },
   
   // Profile status

@@ -20,10 +20,28 @@ exports.signup = async (req, res) => {
 
     // Create user based on role
     if (role === 'counselor') {
+      // For counselors, we only create the basic auth info
+      // The rest of the profile will be completed in the profile creation step
       user = new Counselor({
         email,
         password: hashedPassword,
-        fullName: name
+        // Set default values for required fields
+        institutionName: 'Pending',
+        registrationNumber: 'Pending',
+        yearsOfOperation: 'less1',
+        institutionType: 'private',
+        location: {
+          coordinates: [0, 0],
+          address: 'Pending'
+        },
+        phoneNumber: 'Pending',
+        virtualCounseling: 'no',
+        numberOfCounselors: 1,
+        waitTime: 'sameWeek',
+        isLegallyRegistered: false,
+        upholdEthics: false,
+        consentToDisplay: false,
+        profileCompleted: false
       });
     } else {
       user = new User({
@@ -54,7 +72,7 @@ exports.signup = async (req, res) => {
     });
   } catch (error) {
     console.error('Signup error:', error);
-    res.status(500).json({ message: 'Server error' });
+    res.status(500).json({ message: 'Server error', error: error.message });
   }
 };
 

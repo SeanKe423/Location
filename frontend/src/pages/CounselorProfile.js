@@ -2,32 +2,55 @@ import React, { useState } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import '../App.css';
-import signupImage from '../signupuser.jpg'; // Update the image import
+import signupImage from '../signupuser.jpg';
+import { MapContainer, TileLayer, Marker, useMapEvents } from 'react-leaflet';
+import 'leaflet/dist/leaflet.css';
+import L from 'leaflet';
+
+// Fix for default marker icon
+delete L.Icon.Default.prototype._getIconUrl;
+L.Icon.Default.mergeOptions({
+  iconRetinaUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-icon-2x.png',
+  iconUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-icon.png',
+  shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-shadow.png',
+});
 
 const CounselorProfile = () => {
   const [step, setStep] = useState(1);
   const [formData, setFormData] = useState({
-    // Step 1: Basic Information (removed fullName and email)
+    // Step 1: Institution Details
+    institutionName: '',
+    registrationNumber: '',
+    yearsOfOperation: '',
+    institutionType: '',
+    otherInstitutionType: '',
+
+    // Step 2: Location & Contact
+    location: {
+      coordinates: [0, 0],
+      address: ''
+    },
     phoneNumber: '',
-    gender: '',
+    email: '',
+    website: '',
+
+    // Step 3: Services Offered
+    counselingServices: [],
+    otherCounselingService: '',
+    targetAgeGroups: [],
     languages: [],
     otherLanguage: '',
+    virtualCounseling: '',
 
-    // Step 2: Qualifications & Experience
-    education: '',
-    otherEducation: '',
-    cpbNumber: '',
-    otherCertifications: '',
-    yearsExperience: '',
+    // Step 4: Staff & Capacity
+    numberOfCounselors: '',
+    waitTime: '',
 
-    // Step 3: Specialization
-    specializations: [],
-    otherSpecialization: '',
-
-    // Step 4: Verification
+    // Step 5: Ethics, Verification & Consent
     documents: null,
-    agreeToTerms: false,
-    additionalComments: ''
+    isLegallyRegistered: false,
+    upholdEthics: false,
+    consentToDisplay: false
   });
 
   const navigate = useNavigate();
@@ -36,7 +59,7 @@ const CounselorProfile = () => {
     const { name, value, type, checked } = e.target;
     
     if (type === 'checkbox') {
-      if (name === 'languages' || name === 'specializations') {
+      if (name === 'counselingServices' || name === 'targetAgeGroups' || name === 'languages') {
         setFormData(prev => ({
           ...prev,
           [name]: checked 
@@ -73,26 +96,49 @@ const CounselorProfile = () => {
         return;
       }
 
-      console.log('Submitting with token:', token); // Debug log
+      // Create a new object with the form data
+      const formDataToSend = {
+        institutionName: formData.institutionName,
+        registrationNumber: formData.registrationNumber,
+        yearsOfOperation: formData.yearsOfOperation,
+        institutionType: formData.institutionType,
+        otherInstitutionType: formData.otherInstitutionType,
+        location: {
+          coordinates: formData.location.coordinates,
+          address: formData.location.address
+        },
+        phoneNumber: formData.phoneNumber,
+        email: formData.email,
+        website: formData.website,
+        counselingServices: formData.counselingServices,
+        otherCounselingService: formData.otherCounselingService,
+        targetAgeGroups: formData.targetAgeGroups,
+        languages: formData.languages,
+        otherLanguage: formData.otherLanguage,
+        virtualCounseling: formData.virtualCounseling,
+        numberOfCounselors: parseInt(formData.numberOfCounselors),
+        waitTime: formData.waitTime,
+        isLegallyRegistered: formData.isLegallyRegistered,
+        upholdEthics: formData.upholdEthics,
+        consentToDisplay: formData.consentToDisplay
+      };
 
-      const formDataToSend = new FormData();
+      // Create FormData object for file upload
+      const formDataObj = new FormData();
       
-      // Append all form data
-      Object.keys(formData).forEach(key => {
-        if (key === 'documents') {
-          if (formData[key]) {
-            formDataToSend.append(key, formData[key]);
-          }
-        } else if (Array.isArray(formData[key])) {
-          formDataToSend.append(key, JSON.stringify(formData[key]));
-        } else {
-          formDataToSend.append(key, formData[key]);
-        }
-      });
+      // Append the JSON data
+      formDataObj.append('data', JSON.stringify(formDataToSend));
+      
+      // Append the document if it exists
+      if (formData.documents) {
+        formDataObj.append('documents', formData.documents);
+      }
+
+      console.log('Sending form data:', formDataToSend); // Debug log
 
       const response = await axios.post(
         'http://localhost:5000/api/auth/create-counselor-profile',
-        formDataToSend,
+        formDataObj,
         {
           headers: { 
             'Authorization': `Bearer ${token}`,
@@ -101,28 +147,153 @@ const CounselorProfile = () => {
         }
       );
 
-      console.log('Profile creation response:', response.data); // Debug log
-
       if (response.data) {
         alert('Profile created successfully!');
         navigate('/dashboard');
       }
     } catch (error) {
       console.error('Profile creation error:', error.response || error);
-      alert(error.response?.data?.message || 'Profile creation failed');
+      
+      // Handle different types of errors
+      if (error.response) {
+        const { data } = error.response;
+        
+        if (data.fields) {
+          // Handle missing fields error
+          alert(`Please fill in all required fields: ${data.fields.join(', ')}`);
+        } else if (data.message) {
+          // Handle other server errors
+          alert(`Error: ${data.message}`);
+        } else {
+          alert('Profile creation failed. Please try again.');
+        }
+      } else if (error.request) {
+        // Handle network errors
+        alert('Network error. Please check your connection and try again.');
+      } else {
+        // Handle other errors
+        alert('An unexpected error occurred. Please try again.');
+      }
     }
   };
 
   const nextStep = () => setStep(prev => prev + 1);
   const prevStep = () => setStep(prev => prev - 1);
 
+  const LocationMarker = () => {
+    const map = useMapEvents({
+      click(e) {
+        const { lat, lng } = e.latlng;
+        setFormData(prev => ({
+          ...prev,
+          location: {
+            ...prev.location,
+            coordinates: [lat, lng]
+          }
+        }));
+      }
+    });
+
+    return formData.location.coordinates[0] !== 0 ? (
+      <Marker position={formData.location.coordinates} />
+    ) : null;
+  };
+
   const renderStep = () => {
     switch(step) {
       case 1:
         return (
           <section className="form-step-section">
-            <h3>Step 1: Basic Information</h3>
+            <h3>Step 1: Institution Details</h3>
             <div className="form-questions">
+              <input
+                className='counseltext'
+                type="text"
+                name="institutionName"
+                placeholder="Institution Name"
+                value={formData.institutionName}
+                onChange={handleChange}
+                required
+              />
+
+              <input
+                className='counseltext'
+                type="text"
+                name="registrationNumber"
+                placeholder="Official Registration Number"
+                value={formData.registrationNumber}
+                onChange={handleChange}
+                required
+              />
+
+              <select name="yearsOfOperation" onChange={handleChange} required>
+                <option value="">Years of Operation</option>
+                <option value="less1">Less than 1 year</option>
+                <option value="1-5">1–5 years</option>
+                <option value="6-10">6–10 years</option>
+                <option value="10+">10+ years</option>
+              </select>
+
+              <select name="institutionType" onChange={handleChange} required>
+                <option value="">Institution Type</option>
+                <option value="ngo">NGO / Non-profit</option>
+                <option value="private">Private Counseling Practice</option>
+                <option value="religious">Religious/Church-based Center</option>
+                <option value="university">University Counseling Center</option>
+                <option value="government">Government Clinic</option>
+                <option value="other">Other</option>
+              </select>
+
+              {formData.institutionType === 'other' && (
+                <input
+                  className='counseltext'
+                  type="text"
+                  name="otherInstitutionType"
+                  placeholder="Specify Other Institution Type"
+                  value={formData.otherInstitutionType}
+                  onChange={handleChange}
+                />
+              )}
+            </div>
+          </section>
+        );
+
+      case 2:
+        return (
+          <section className="form-step-section">
+            <h3>Step 2: Location & Contact</h3>
+            <div className="form-questions">
+              <div className="map-container">
+                <h4>Physical Location</h4>
+                <p>Click on the map to mark your location</p>
+                <div style={{ height: '300px', width: '100%', marginBottom: '1rem' }}>
+                  <MapContainer
+                    center={[0, 0]}
+                    zoom={2}
+                    style={{ height: '100%', width: '100%' }}
+                  >
+                    <TileLayer
+                      url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+                      attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+                    />
+                    <LocationMarker />
+                  </MapContainer>
+                </div>
+                <input
+                  type="text"
+                  name="location.address"
+                  placeholder="Enter your address"
+                  value={formData.location.address}
+                  onChange={(e) => setFormData(prev => ({
+                    ...prev,
+                    location: {
+                      ...prev.location,
+                      address: e.target.value
+                    }
+                  }))}
+                />
+              </div>
+
               <input
                 className='counseltext'
                 type="tel"
@@ -132,116 +303,25 @@ const CounselorProfile = () => {
                 onChange={handleChange}
                 required
               />
-              
-              <div className="radio-group">
-                <label>Gender:</label>
-                <div>
-                  <input
-                    type="radio"
-                    name="gender"
-                    value="male"
-                    checked={formData.gender === 'male'}
-                    onChange={handleChange}
-                  />
-                  <label>Male</label>
-                </div>
-                <div>
-                  <input
-                    type="radio"
-                    name="gender"
-                    value="female"
-                    checked={formData.gender === 'female'}
-                    onChange={handleChange}
-                  />
-                  <label>Female</label>
-                </div>
-              </div>
-
-              <div className="checkbox-group">
-                <label>Languages you can provide counselling in:</label>
-                <div>
-                  <input
-                    type="checkbox"
-                    name="languages"
-                    value="English"
-                    checked={formData.languages.includes('English')}
-                    onChange={handleChange}
-                  />
-                  <label>English</label>
-                </div>
-                <div>
-                  <input
-                    type="checkbox"
-                    name="languages"
-                    value="Swahili"
-                    checked={formData.languages.includes('Swahili')}
-                    onChange={handleChange}
-                  />
-                  <label>Swahili</label>
-                </div>
-                <input
-                  className='ol'
-                  type="text"
-                  name="otherLanguage"
-                  placeholder="Other Languages"
-                  value={formData.otherLanguage}
-                  onChange={handleChange}
-                />
-              </div>
-            </div>
-          </section>
-        );
-
-      case 2:
-        return (
-          <section className="form-step-section">
-            <h3>Step 2: Qualifications & Experience</h3>
-            <div className="form-questions">
-              <select name="education" onChange={handleChange} required>
-                <option value="">Select Education Level</option>
-                <option value="diploma">Diploma in Counselling Psychology</option>
-                <option value="bachelors">Bachelor's Degree in Counselling Psychology</option>
-                <option value="masters">Master's Degree in Counselling Psychology</option>
-                <option value="phd">PhD in Counselling Psychology</option>
-                <option value="other">Other</option>
-              </select>
-              
-              {formData.education === 'other' && (
-                <input
-                  className='counseltext'
-                  type="text"
-                  name="otherEducation"
-                  placeholder="Specify Other Education"
-                  value={formData.otherEducation}
-                  onChange={handleChange}
-                />
-              )}
 
               <input
                 className='counseltext'
-                type="text"
-                name="cpbNumber"
-                placeholder="CPB Number"
-                value={formData.cpbNumber}
+                type="email"
+                name="email"
+                placeholder="Email"
+                value={formData.email}
                 onChange={handleChange}
                 required
               />
-              
-              <textarea
+
+              <input
                 className='counseltext'
-                name="otherCertifications"
-                placeholder="Other Certifications"
-                value={formData.otherCertifications}
+                type="url"
+                name="website"
+                placeholder="Website (optional)"
+                value={formData.website}
                 onChange={handleChange}
               />
-
-              <select name="yearsExperience" onChange={handleChange} required>
-                <option value="">Years of Experience</option>
-                <option value="less1">Less than 1 year</option>
-                <option value="1-3">1 - 3 years</option>
-                <option value="4-6">4 - 6 years</option>
-                <option value="7+">7+ years</option>
-              </select>
             </div>
           </section>
         );
@@ -249,39 +329,108 @@ const CounselorProfile = () => {
       case 3:
         return (
           <section className="form-step-section">
-            <h3>Step 3: Areas of Specialization</h3>
+            <h3>Step 3: Services Offered</h3>
             <div className="form-questions">
               <div className="checkbox-group">
+                <label>Counseling Services Provided:</label>
                 {[
                   'General Mental Health',
-                  'Relationship/Marital Counselling',
-                  'Family Counselling',
+                  'Relationship/Marital Counseling',
+                  'Family Counseling',
                   'Trauma & Abuse Recovery',
-                  'Faith-Based Counselling',
-                  'Career & Workplace Counselling',
-                  'Addiction Counselling',
-                  'Grief & Loss Counselling',
-                  'Student & Academic Counselling'
-                ].map(spec => (
-                  <div key={spec}>
+                  'Faith-Based Counseling',
+                  'Career/Workplace Counseling',
+                  'Addiction Counseling',
+                  'Grief & Loss Counseling',
+                  'Student & Academic Counseling'
+                ].map(service => (
+                  <div key={service}>
                     <input
                       type="checkbox"
-                      name="specializations"
-                      value={spec}
-                      checked={formData.specializations.includes(spec)}
+                      name="counselingServices"
+                      value={service}
+                      checked={formData.counselingServices.includes(service)}
                       onChange={handleChange}
                     />
-                    <label>{spec}</label>
+                    <label>{service}</label>
                   </div>
                 ))}
                 <input
                   className='ol'
                   type="text"
-                  name="otherSpecialization"
-                  placeholder="Other Specializations"
-                  value={formData.otherSpecialization}
+                  name="otherCounselingService"
+                  placeholder="Other Services"
+                  value={formData.otherCounselingService}
                   onChange={handleChange}
                 />
+              </div>
+
+              <div className="checkbox-group">
+                <label>Target Age Groups:</label>
+                {[
+                  ['children', 'Children (3-12)'],
+                  ['adolescents', 'Adolescents (13–17)'],
+                  ['youngAdults', 'Young Adults (18–25)'],
+                  ['adults', 'Adults (26–50)'],
+                  ['seniors', 'Seniors (51+)']
+                ].map(([value, label]) => (
+                  <div key={value}>
+                    <input
+                      type="checkbox"
+                      name="targetAgeGroups"
+                      value={value}
+                      checked={formData.targetAgeGroups.includes(value)}
+                      onChange={handleChange}
+                    />
+                    <label>{label}</label>
+                  </div>
+                ))}
+              </div>
+
+              <div className="checkbox-group">
+                <label>Languages Supported:</label>
+                {[
+                  ['English', 'English'],
+                  ['Swahili', 'Swahili']
+                ].map(([value, label]) => (
+                  <div key={value}>
+                    <input
+                      type="checkbox"
+                      name="languages"
+                      value={value}
+                      checked={formData.languages.includes(value)}
+                      onChange={handleChange}
+                    />
+                    <label>{label}</label>
+                  </div>
+                ))}
+                <input
+                  className='ol'
+                  type="text"
+                  name="otherLanguage"
+                  placeholder="Local languages"
+                  value={formData.otherLanguage}
+                  onChange={handleChange}
+                />
+              </div>
+
+              <div className="radio-group">
+                <label>Do you offer virtual counseling sessions?</label>
+                {[
+                  ['yes', 'Yes'],
+                  ['no', 'No']
+                ].map(([value, label]) => (
+                  <div key={value}>
+                    <input
+                      type="radio"
+                      name="virtualCounseling"
+                      value={value}
+                      checked={formData.virtualCounseling === value}
+                      onChange={handleChange}
+                    />
+                    <label>{label}</label>
+                  </div>
+                ))}
               </div>
             </div>
           </section>
@@ -290,7 +439,33 @@ const CounselorProfile = () => {
       case 4:
         return (
           <section className="form-step-section">
-            <h3>Step 4: Verification & Final Steps</h3>
+            <h3>Step 4: Staff & Capacity</h3>
+            <div className="form-questions">
+              <input
+                className='counseltext'
+                type="number"
+                name="numberOfCounselors"
+                placeholder="Number of Licensed Counselors Staffed"
+                value={formData.numberOfCounselors}
+                onChange={handleChange}
+                min="1"
+                required
+              />
+
+              <select name="waitTime" onChange={handleChange} required>
+                <option value="">Average Wait Time for Appointments</option>
+                <option value="sameWeek">Same week</option>
+                <option value="1-2weeks">1–2 weeks</option>
+                <option value="3+weeks">3+ weeks</option>
+              </select>
+            </div>
+          </section>
+        );
+
+      case 5:
+        return (
+          <section className="form-step-section">
+            <h3>Step 5: Ethics, Verification & Consent</h3>
             <div className="form-questions">
               <div className="file-upload">
                 <label>Upload Documents:</label>
@@ -298,32 +473,46 @@ const CounselorProfile = () => {
                   type="file"
                   name="documents"
                   onChange={handleChange}
-                  accept=".pdf,.doc,.docx,.jpg,.jpeg,.png"
+                  accept=".pdf,.jpg,.jpeg,.png"
                   required
                 />
+                <small>Upload institution license/registration (PDF, JPG, PNG)</small>
               </div>
 
               <div className="checkbox-group">
                 <div>
                   <input
                     type="checkbox"
-                    style={{ transform: "scale(2.0)", margin: "5px" }} 
-                    name="agreeToTerms"
-                    checked={formData.agreeToTerms}
+                    name="isLegallyRegistered"
+                    checked={formData.isLegallyRegistered}
                     onChange={handleChange}
                     required
                   />
-                  <label>I agree to the platform's ethical guidelines and confidentiality policies</label>
+                  <label>I confirm this institution is legally registered and compliant with relevant counseling regulations.</label>
+                </div>
+
+                <div>
+                  <input
+                    type="checkbox"
+                    name="upholdEthics"
+                    checked={formData.upholdEthics}
+                    onChange={handleChange}
+                    required
+                  />
+                  <label>I agree to uphold confidentiality, ethical standards, and data protection laws.</label>
+                </div>
+
+                <div>
+                  <input
+                    type="checkbox"
+                    name="consentToDisplay"
+                    checked={formData.consentToDisplay}
+                    onChange={handleChange}
+                    required
+                  />
+                  <label>I consent to the platform displaying the institution publicly for matching purposes.</label>
                 </div>
               </div>
-
-              <textarea
-                className='counseltext'
-                name="additionalComments"
-                placeholder="Additional Comments (Optional)"
-                value={formData.additionalComments}
-                onChange={handleChange}
-              />
             </div>
           </section>
         );
@@ -341,16 +530,16 @@ const CounselorProfile = () => {
           <img src={signupImage} alt="Supportive hands" />
           <div className="auth-hero-content">
             <h1>Complete Your Profile</h1>
-            <p>Join our network of mental health professionals</p>
+            <p>Join our network of mental health institutions</p>
           </div>
         </div>
 
         {/* Right side - Profile Form */}
         <div className="auth-form-container">
           <div className="auth-form-content counselor">
-            <h2>Professional Details</h2>
+            <h2>Institution Details</h2>
             <div className="progress-indicator">
-              {[1, 2, 3, 4].map((dotStep) => (
+              {[1, 2, 3, 4, 5].map((dotStep) => (
                 <div 
                   key={dotStep} 
                   className={`step-dot ${step === dotStep ? 'active' : ''}`}
@@ -365,7 +554,7 @@ const CounselorProfile = () => {
                     Previous
                   </button>
                 )}
-                {step < 4 ? (
+                {step < 5 ? (
                   <button type="button" onClick={nextStep} className="auth-button">
                     Next
                   </button>

@@ -15,7 +15,7 @@ const userSchema = new mongoose.Schema({
   // Profile fields
   ageGroup: {
     type: String,
-    enum: ['under18', '18-25', '26-35', '36-50', '51above'],
+    enum: ['18-25', '26-35', '36-50', '51above'],
     required: false
   },
   gender: {
@@ -30,6 +30,20 @@ const userSchema = new mongoose.Schema({
     type: String
   },
 
+  // Location
+  location: {
+    type: {
+      type: String,
+      enum: ['Point'],
+      default: 'Point'
+    },
+    coordinates: {
+      type: [Number],
+      default: [0, 0]
+    },
+    address: String
+  },
+
   // Counseling needs
   counselingTypes: [{
     type: String
@@ -37,24 +51,30 @@ const userSchema = new mongoose.Schema({
   otherCounselingType: {
     type: String
   },
-  currentIssues: [{
-    type: String
-  }],
-  otherIssue: {
-    type: String
-  },
   severityLevel: {
     type: String,
     enum: ['mild', 'moderate', 'severe'],
     required: false
   },
-  counselorGenderPreference: {
+
+  // Accessibility & Availability
+  preferredMode: [{
     type: String,
-    enum: ['no-preference', 'male', 'female'],
-    required: false
+    enum: ['in-person', 'online', 'no-preference']
+  }],
+
+  // Consent
+  privacyPolicyConsent: {
+    type: Boolean,
+    default: false
   },
-  additionalPreferences: {
-    type: String
+  emergencyCareConsent: {
+    type: Boolean,
+    default: false
+  },
+  matchingConsent: {
+    type: Boolean,
+    default: false
   },
 
   // Profile status
@@ -82,18 +102,6 @@ const userSchema = new mongoose.Schema({
     type: String,
     enum: ['user', 'counselor'],
     default: 'user'
-  },
-  location: {
-    type: {
-      type: String,
-      enum: ['Point'],
-      default: 'Point'
-    },
-    coordinates: {
-      type: [Number],
-      default: [0, 0]
-    },
-    address: String
   }
 });
 

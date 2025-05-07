@@ -43,6 +43,19 @@ router.post("/create-counselor-profile", authMiddleware, async (req, res) => {
       return res.status(403).json({ message: 'Access denied. Counselor role required.' });
     }
 
+    // Parse the form data
+    let formData;
+    try {
+      formData = JSON.parse(req.body.data);
+      console.log('Parsed form data:', formData); // Debug log
+    } catch (parseError) {
+      console.error('Error parsing form data:', parseError);
+      return res.status(400).json({ 
+        message: "Invalid form data format",
+        error: parseError.message 
+      });
+    }
+
     // Handle file upload if documents were included
     let documentUrl = null;
     if (req.files && req.files.documents) {
@@ -52,29 +65,46 @@ router.post("/create-counselor-profile", authMiddleware, async (req, res) => {
       documentUrl = `/uploads/${fileName}`;
     }
 
-    // Find and update counselor profile
+    // Validate required fields
+    const requiredFields = [
+      'institutionName',
+      'registrationNumber',
+      'yearsOfOperation',
+      'institutionType',
+      'phoneNumber',
+      'virtualCounseling',
+      'numberOfCounselors',
+      'waitTime'
+    ];
+
+    const missingFields = requiredFields.filter(field => !formData[field]);
+    if (missingFields.length > 0) {
+      return res.status(400).json({
+        message: "Missing required fields",
+        fields: missingFields
+      });
+    }
+
+    // Validate location data
+    if (!formData.location || !formData.location.address) {
+      return res.status(400).json({
+        message: "Location address is required"
+      });
+    }
+
+    // Find and update counselor profile with new structure
+    const updateData = {
+      ...formData,
+      documents: documentUrl,
+      profileCompleted: true
+    };
+
+    console.log('Update data:', updateData); // Debug log
+
     const counselor = await Counselor.findByIdAndUpdate(
       counselorId,
-      {
-        fullName: req.body.fullName,
-        email: req.body.email,
-        phoneNumber: req.body.phoneNumber,
-        gender: req.body.gender,
-        languages: JSON.parse(req.body.languages || '[]'),
-        otherLanguage: req.body.otherLanguage,
-        education: req.body.education,
-        otherEducation: req.body.otherEducation,
-        cpbNumber: req.body.cpbNumber,
-        otherCertifications: req.body.otherCertifications,
-        yearsExperience: req.body.yearsExperience,
-        specializations: JSON.parse(req.body.specializations || '[]'),
-        otherSpecialization: req.body.otherSpecialization,
-        documents: documentUrl,
-        agreeToTerms: req.body.agreeToTerms === 'true',
-        additionalComments: req.body.additionalComments,
-        profileCompleted: true
-      },
-      { new: true }
+      updateData,
+      { new: true, runValidators: true }
     );
 
     if (!counselor) {
@@ -88,9 +118,11 @@ router.post("/create-counselor-profile", authMiddleware, async (req, res) => {
 
   } catch (error) {
     console.error("Profile creation error:", error);
+    console.error("Error stack:", error.stack); // Add stack trace
     res.status(500).json({ 
       message: "Profile creation failed",
-      error: error.message 
+      error: error.message,
+      stack: error.stack // Include stack trace in response
     });
   }
 });
@@ -98,7 +130,7 @@ router.post("/create-counselor-profile", authMiddleware, async (req, res) => {
 // Create user profile route
 router.post("/create-user-profile", authMiddleware, async (req, res) => {
   try {
-    console.log('Creating user profile with data:', req.body); // Debug log
+    console.log('Creating user profile with data:', JSON.stringify(req.body, null, 2));
     const userId = req.user.id;
 
     // Verify user exists and is not a counselor
@@ -107,30 +139,70 @@ router.post("/create-user-profile", authMiddleware, async (req, res) => {
       return res.status(404).json({ message: "User not found" });
     }
 
+    // Validate required fields
+    if (!req.body.ageGroup || !req.body.gender || !req.body.languages || !req.body.counselingTypes || !req.body.severityLevel || !req.body.preferredMode) {
+      return res.status(400).json({ 
+        message: "Missing required fields",
+        receivedData: req.body
+      });
+    }
+
+    // Validate location data
+    if (!req.body.location || !req.body.location.coordinates || !req.body.location.address) {
+      return res.status(400).json({ 
+        message: "Invalid location data",
+        receivedLocation: req.body.location
+      });
+    }
+
+    // Helper function to safely parse arrays
+    const safeParseArray = (data) => {
+      if (Array.isArray(data)) return data;
+      try {
+        return JSON.parse(data || '[]');
+      } catch (e) {
+        return [];
+      }
+    };
+
     // Update user profile
+    const updateData = {
+      ageGroup: req.body.ageGroup,
+      gender: req.body.gender,
+      languages: safeParseArray(req.body.languages),
+      otherLanguage: req.body.otherLanguage,
+      location: {
+        type: 'Point',
+        coordinates: req.body.location.coordinates,
+        address: req.body.location.address
+      },
+      counselingTypes: safeParseArray(req.body.counselingTypes),
+      otherCounselingType: req.body.otherCounselingType,
+      severityLevel: req.body.severityLevel,
+      preferredMode: safeParseArray(req.body.preferredMode),
+      privacyPolicyConsent: req.body.privacyPolicyConsent,
+      emergencyCareConsent: req.body.emergencyCareConsent,
+      matchingConsent: req.body.matchingConsent,
+      profileCompleted: true
+    };
+
+    console.log('Update data:', JSON.stringify(updateData, null, 2));
+
     const updatedUser = await User.findByIdAndUpdate(
       userId,
-      {
-        ageGroup: req.body.ageGroup,
-        gender: req.body.gender,
-        languages: Array.isArray(req.body.languages) ? req.body.languages : JSON.parse(req.body.languages || '[]'),
-        otherLanguage: req.body.otherLanguage,
-        counselingTypes: Array.isArray(req.body.counselingTypes) ? req.body.counselingTypes : JSON.parse(req.body.counselingTypes || '[]'),
-        otherCounselingType: req.body.otherCounselingType,
-        currentIssues: Array.isArray(req.body.currentIssues) ? req.body.currentIssues : JSON.parse(req.body.currentIssues || '[]'),
-        otherIssue: req.body.otherIssue,
-        severityLevel: req.body.severityLevel,
-        counselorGenderPreference: req.body.counselorGenderPreference,
-        additionalPreferences: req.body.additionalPreferences,
-        profileCompleted: true
-      },
+      updateData,
       { 
         new: true,
         runValidators: true 
       }
     );
 
-    console.log('Updated user:', updatedUser); // Debug log
+    if (!updatedUser) {
+      console.error('User not found after update attempt');
+      return res.status(404).json({ message: "User not found after update" });
+    }
+
+    console.log('Updated user:', JSON.stringify(updatedUser, null, 2));
 
     res.json({
       message: "Profile created successfully",
@@ -138,10 +210,15 @@ router.post("/create-user-profile", authMiddleware, async (req, res) => {
     });
 
   } catch (error) {
-    console.error("Profile creation error:", error);
+    console.error("Profile creation error details:", {
+      message: error.message,
+      stack: error.stack,
+      name: error.name
+    });
     res.status(500).json({ 
       message: "Profile creation failed",
-      error: error.message 
+      error: error.message,
+      details: error.stack
     });
   }
 });
@@ -213,21 +290,28 @@ router.put("/edit-counselor-profile", authMiddleware, async (req, res) => {
     }
 
     const updateData = {
-      fullName: req.body.fullName,
-      email: req.body.email,
+      institutionName: req.body.institutionName,
+      registrationNumber: req.body.registrationNumber,
+      yearsOfOperation: req.body.yearsOfOperation,
+      institutionType: req.body.institutionType,
+      location: {
+        coordinates: req.body.location.coordinates || [0, 0],
+        address: req.body.location.address
+      },
       phoneNumber: req.body.phoneNumber,
-      gender: req.body.gender,
+      email: req.body.email,
+      website: req.body.website,
+      counselingServices: Array.isArray(req.body.counselingServices) ? req.body.counselingServices : JSON.parse(req.body.counselingServices || '[]'),
+      otherCounselingService: req.body.otherCounselingService,
+      targetAgeGroups: Array.isArray(req.body.targetAgeGroups) ? req.body.targetAgeGroups : JSON.parse(req.body.targetAgeGroups || '[]'),
       languages: Array.isArray(req.body.languages) ? req.body.languages : JSON.parse(req.body.languages || '[]'),
       otherLanguage: req.body.otherLanguage,
-      education: req.body.education,
-      otherEducation: req.body.otherEducation,
-      cpbNumber: req.body.cpbNumber,
-      otherCertifications: req.body.otherCertifications,
-      yearsExperience: req.body.yearsExperience,
-      specializations: Array.isArray(req.body.specializations) ? req.body.specializations : JSON.parse(req.body.specializations || '[]'),
-      otherSpecialization: req.body.otherSpecialization,
-      agreeToTerms: req.body.agreeToTerms === 'true',
-      additionalComments: req.body.additionalComments
+      virtualCounseling: req.body.virtualCounseling,
+      numberOfCounselors: req.body.numberOfCounselors,
+      waitTime: req.body.waitTime,
+      isLegallyRegistered: req.body.isLegallyRegistered === 'true',
+      upholdEthics: req.body.upholdEthics === 'true',
+      consentToDisplay: req.body.consentToDisplay === 'true'
     };
 
     // Only add documentUrl if a new file was uploaded
