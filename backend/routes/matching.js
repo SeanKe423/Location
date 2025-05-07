@@ -1,32 +1,65 @@
 const express = require('express');
 const router = express.Router();
 const authMiddleware = require('../middleware/authMiddleware');
-const MatchingService = require('../services/matchingService');
+const User = require('../models/User');
+const Institution = require('../models/Institution');
 const Match = require('../models/Match');
-const Counselor = require('../models/Counselor');
+const { findMatches } = require('../services/matchingService');
 
 // Get matches for a user
-router.get('/find-matches', authMiddleware, async (req, res) => {
+router.get('/matches', authMiddleware, async (req, res) => {
   try {
     console.log('Finding matches for user:', req.user.id);
     
-    // First, check if there are any counselors
-    const counselorCount = await Counselor.countDocuments({});
-    console.log('Total counselors in database:', counselorCount);
-
-    if (counselorCount === 0) {
-      return res.json({
-        message: 'No counselors available yet',
-        matches: []
-      });
+    const user = await User.findById(req.user.id);
+    if (!user) {
+      console.log('User not found:', req.user.id);
+      return res.status(404).json({ message: 'User not found' });
     }
 
-    const matches = await MatchingService.findMatches(req.user.id);
-    console.log('Matches found:', matches);
+    // Get all institutions that have completed their profiles
+    const institutions = await Institution.find({ profileCompleted: true });
+    console.log('Found institutions:', institutions.length);
+    
+    if (institutions.length === 0) {
+      return res.status(404).json({ message: 'No institutions available for matching' });
+    }
 
-    res.json(matches);
+    try {
+      // Find matches using the matching service
+      const matches = findMatches(user, institutions);
+      console.log('Found matches:', matches.length);
+      
+      // Format the response
+      const formattedMatches = matches.map(match => ({
+        institution: {
+          id: match.institution._id,
+          name: match.institution.institutionName,
+          services: match.institution.counselingServices || [],
+          languages: match.institution.languages || [],
+          location: match.institution.location || {},
+          waitTime: match.institution.waitTime,
+          virtualCounseling: match.institution.virtualCounseling,
+          numberOfCounselors: match.institution.numberOfCounselors,
+          yearsOfOperation: match.institution.yearsOfOperation,
+          targetAgeGroups: match.institution.targetAgeGroups || []
+        },
+        matchQuality: match.matchQuality,
+        scores: match.scores
+      }));
+
+      res.json({
+        matches: formattedMatches
+      });
+    } catch (matchError) {
+      console.error('Error in matching algorithm:', matchError);
+      res.status(500).json({ 
+        message: 'Error in matching algorithm', 
+        error: matchError.message 
+      });
+    }
   } catch (error) {
-    console.error('Error in find-matches route:', error);
+    console.error('Error finding matches:', error);
     res.status(500).json({ 
       message: 'Error finding matches', 
       error: error.message,
@@ -99,6 +132,83 @@ router.post('/create-match', authMiddleware, async (req, res) => {
     console.error('Error creating match:', error);
     res.status(500).json({ 
       message: 'Error creating match', 
+      error: error.message 
+    });
+  }
+});
+
+// Get connection requests
+router.get('/requests', authMiddleware, async (req, res) => {
+  try {
+    const userId = req.user.id;
+    const userRole = req.user.role;
+
+    let requests;
+    if (userRole === 'institution') {
+      // Get requests sent to this institution
+      requests = await Match.find({ 
+        counselorId: userId,
+        status: 'pending'
+      }).populate('userId', 'fullName email');
+    } else {
+      // Get requests sent by this user
+      requests = await Match.find({ 
+        userId: userId,
+        status: 'pending'
+      }).populate('counselorId', 'institutionName email');
+    }
+
+    res.json({ requests });
+  } catch (error) {
+    console.error('Error fetching connection requests:', error);
+    res.status(500).json({ 
+      message: 'Error fetching connection requests', 
+      error: error.message 
+    });
+  }
+});
+
+// Accept connection request
+router.post('/requests/:requestId/accept', authMiddleware, async (req, res) => {
+  try {
+    const request = await Match.findByIdAndUpdate(
+      req.params.requestId,
+      { status: 'accepted' },
+      { new: true }
+    );
+
+    if (!request) {
+      return res.status(404).json({ message: 'Request not found' });
+    }
+
+    res.json({ message: 'Request accepted', request });
+  } catch (error) {
+    console.error('Error accepting request:', error);
+    res.status(500).json({ 
+      message: 'Error accepting request', 
+      error: error.message 
+    });
+  }
+});
+
+// Reject connection request
+router.post('/requests/:requestId/reject', authMiddleware, async (req, res) => {
+  try {
+    const request = await Match.findByIdAndUpdate(
+      req.params.requestId,
+      { status: 'rejected' },
+      { new: true }
+    );
+
+    if (!request) {
+      return res.status(404).json({ message: 'Request not found' });
+    }
+
+    res.json({ message: 'Request rejected', request });
+  } catch (error) {
+    console.error('Error rejecting request:', error);
+    res.status(500).json({ 
+      message: 'Error rejecting request', 
       error: error.message 
     });
   }

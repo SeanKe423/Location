@@ -1,202 +1,200 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
+import { useNavigate } from 'react-router-dom';
 import '../App.css';
 
 const Matchmaking = () => {
   const [matches, setMatches] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [selectedMatch, setSelectedMatch] = useState(null);
+  const navigate = useNavigate();
 
   useEffect(() => {
-    fetchMatches();
-  }, []);
-
   const fetchMatches = async () => {
     try {
       const token = localStorage.getItem('token');
       if (!token) {
-        setError('Please login first');
+          navigate('/login');
         return;
-      }
-      const response = await axios.get('http://localhost:5000/api/matching/find-matches', {
-        headers: { 
-          'Authorization': `Bearer ${token}`
         }
+
+        const response = await axios.get('http://localhost:5000/api/matching/matches', {
+          headers: { Authorization: `Bearer ${token}` }
       });
-      setMatches(response.data);
+
+        setMatches(response.data.matches);
       setLoading(false);
     } catch (error) {
       console.error('Error fetching matches:', error);
-      setError('Error fetching matches. Please try again.');
+        setError(error.response?.data?.message || 'Error fetching matches');
       setLoading(false);
     }
   };
 
-  const handleMatchAction = async (counselorId, status) => {
-    if (!counselorId) {
-      setError('Invalid counselor ID');
-      return;
-    }
-    try {
-      const token = localStorage.getItem('token');
-      if (!token) {
-        setError('You must be logged in to perform this action');
-        return;
-      }
-      
-      // First create a new match
-      const response = await axios.post(
-        'http://localhost:5000/api/matching/create-match',
-        { counselorId },
-        { headers: { Authorization: `Bearer ${token}` } }
-      );
+    fetchMatches();
+  }, [navigate]);
 
-      // Then update its status
-      await axios.put(
-        `http://localhost:5000/api/matching/match/${response.data._id}`,
-        { status },
-        { headers: { Authorization: `Bearer ${token}` } }
-      );
-
-      // Show success message
-      alert(status === 'accepted' ? 
-        'Connection request sent to counselor!' : 
-        'Match removed from your list');
-      fetchMatches();
-    } catch (error) {
-      console.error('Error updating match status:', error);
-      setError('Error updating match status. Please try again.');
-    }
+  const getScoreColor = (score) => {
+    if (score >= 80) return '#4CAF50'; // Strong match - green
+    if (score >= 60) return '#8BC34A'; // Good match - light green
+    if (score >= 40) return '#FFC107'; // Moderate match - yellow
+    return '#F44336'; // Weak match - red
   };
 
-  const getExperienceLabel = (exp) => {
-    const labels = {
-      'less1': 'Less than 1 year',
-      '1-3': '1 - 3 years',
-      '4-6': '4 - 6 years',
-      '7+': '7+ years'
-    };
-    return labels[exp] || exp;
+  const renderMatchCard = (match) => {
+    const { institution, matchQuality, scores } = match;
+
+    return (
+      <div className="match-card" key={institution.id}>
+        <div className="match-header">
+          <h3>{institution.name}</h3>
+          <span className="match-quality" style={{ color: getScoreColor(scores.total) }}>
+            {matchQuality}
+          </span>
+        </div>
+
+        <div className="match-details">
+          <div className="match-scores">
+            <h4>Match Breakdown</h4>
+            <div className="score-item">
+              <span>Counseling Services</span>
+              <div className="score-bar">
+                <div 
+                  className="score-fill" 
+                  style={{ 
+                    width: `${scores.counseling}%`,
+                    backgroundColor: getScoreColor(scores.counseling)
+                  }}
+                />
+                <span>{Math.round(scores.counseling)}%</span>
+              </div>
+            </div>
+            <div className="score-item">
+              <span>Language Compatibility</span>
+              <div className="score-bar">
+                <div 
+                  className="score-fill" 
+                  style={{ 
+                    width: `${scores.language}%`,
+                    backgroundColor: getScoreColor(scores.language)
+                  }}
+                />
+                <span>{Math.round(scores.language)}%</span>
+              </div>
+            </div>
+            <div className="score-item">
+              <span>Location & Accessibility</span>
+              <div className="score-bar">
+                <div 
+                  className="score-fill" 
+                  style={{ 
+                    width: `${scores.location}%`,
+                    backgroundColor: getScoreColor(scores.location)
+                  }}
+                />
+                <span>{Math.round(scores.location)}%</span>
+              </div>
+            </div>
+            <div className="score-item">
+              <span>Age Group Compatibility</span>
+              <div className="score-bar">
+                <div 
+                  className="score-fill" 
+                  style={{ 
+                    width: `${scores.ageGroup}%`,
+                    backgroundColor: getScoreColor(scores.ageGroup)
+                  }}
+                />
+                <span>{Math.round(scores.ageGroup)}%</span>
+              </div>
+            </div>
+          </div>
+
+          <div className="institution-info">
+            <h4>Institution Details</h4>
+            <div className="info-grid">
+              <div className="info-item">
+                <strong>Services:</strong>
+                <ul>
+                  {institution.services.map((service, index) => (
+                    <li key={index}>{service}</li>
+                  ))}
+                </ul>
+              </div>
+              <div className="info-item">
+                <strong>Languages:</strong>
+                <ul>
+                  {institution.languages.map((language, index) => (
+                    <li key={index}>{language}</li>
+                  ))}
+                </ul>
+              </div>
+              <div className="info-item">
+                <strong>Location:</strong>
+                <p>{institution.location.address}</p>
+              </div>
+              <div className="info-item">
+                <strong>Wait Time:</strong>
+                <p>{institution.waitTime}</p>
+              </div>
+              <div className="info-item">
+                <strong>Virtual Counseling:</strong>
+                <p>{institution.virtualCounseling === 'yes' ? 'Available' : 'Not Available'}</p>
+              </div>
+              <div className="info-item">
+                <strong>Staff:</strong>
+                <p>{institution.numberOfCounselors} counselors</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div className="match-actions">
+          <button className="action-button primary">Contact Institution</button>
+          <button className="action-button secondary">View Full Profile</button>
+        </div>
+      </div>
+    );
   };
 
   if (loading) {
     return (
-      <div className="matchmaking-container">
-        <div className="loading-state">
+      <div className="loading-container">
           <div className="loading-spinner"></div>
           <p>Finding your best matches...</p>
-        </div>
       </div>
     );
   }
 
   if (error) {
     return (
-      <div className="matchmaking-container">
-        <div className="error-message">{error}</div>
+      <div className="error-container">
+        <h2>Error</h2>
+        <p>{error}</p>
+        <button onClick={() => window.location.reload()}>Try Again</button>
       </div>
     );
   }
 
-  if (!matches || matches.length === 0) {
+  if (matches.length === 0) {
     return (
-      <div className="matchmaking-container">
-        <h2>Your Matched Counselors</h2>
-        <div className="no-matches-message">
-          <p>No matching counselors found at the moment.</p>
-          <p>This could be because:</p>
-          <ul>
-            <li>There are no registered counselors yet</li>
-            <li>Available counselors don't match your preferences</li>
-            <li>Counselors haven't completed their profiles</li>
-          </ul>
-          <p>Please check back later or adjust your preferences.</p>
-        </div>
+      <div className="no-matches-container">
+        <h2>No Matches Found</h2>
+        <p>We couldn't find any institutions that match your preferences.</p>
+        <p>Try updating your profile or check back later.</p>
       </div>
     );
   }
 
   return (
     <div className="matchmaking-container">
-      <div className="matchmaking-header">
-        <h2>Your Matched Counselors</h2>
-        <p className="subtitle">We've found counselors that match your preferences and needs</p>
-      </div>
-
+      <h1>Your Matches</h1>
+      <p className="matchmaking-intro">
+        We've found {matches.length} institutions that match your preferences.
+        Each match is scored based on multiple factors to help you find the best fit.
+      </p>
       <div className="matches-grid">
-        {matches.map(match => (
-          <div key={match._id} className="match-card">
-            <div className="match-header">
-              <div className="match-score">
-                <span className="score-label">Match Score</span>
-                <span className="score-value">{Math.round(match.matchScore)}%</span>
-              </div>
-              <h3 className="counselor-name">{match.counselorId?.fullName}</h3>
-            </div>
-
-            <div className="match-content">
-              <div className="match-section">
-                <h4>Expertise</h4>
-                <div className="tags-container">
-                  {match.counselorId?.specializations?.map((spec, index) => (
-                    <span key={`${match._id}-spec-${index}`} className="specialty-tag">{spec}</span>
-                  ))}
-                </div>
-              </div>
-
-              <div className="match-section">
-                <h4>Languages</h4>
-                <div className="tags-container">
-                  {match.counselorId?.languages?.map((lang, index) => (
-                    <span key={`${match._id}-lang-${index}`} className="language-tag">{lang}</span>
-                  ))}
-                </div>
-              </div>
-
-              <div className="match-section">
-                <h4>Experience</h4>
-                <p>{getExperienceLabel(match.counselorId?.yearsExperience)}</p>
-              </div>
-
-              <div className="match-criteria">
-                <div className="criteria-item">
-                  <span>Language Match</span>
-                  <div className="progress-bar">
-                    <div 
-                      className="progress" 
-                      style={{ width: `${Math.round(match.matchCriteria?.languageMatch || 0)}%` }}
-                    ></div>
-                  </div>
-                </div>
-                <div className="criteria-item">
-                  <span>Specialization Match</span>
-                  <div className="progress-bar">
-                    <div 
-                      className="progress" 
-                      style={{ width: `${Math.round(match.matchCriteria?.specializationMatch || 0)}%` }}
-                    ></div>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            <div className="match-actions">
-              <button 
-                onClick={() => handleMatchAction(match.counselorId._id, 'accepted')}
-                className="accept-button"
-              >
-                Connect with Counselor
-              </button>
-              <button 
-                onClick={() => handleMatchAction(match.counselorId._id, 'rejected')}
-                className="reject-button"
-              >
-                Not Interested
-              </button>
-            </div>
-          </div>
-        ))}
+        {matches.map(renderMatchCard)}
       </div>
     </div>
   );

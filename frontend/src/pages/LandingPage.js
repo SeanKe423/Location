@@ -35,8 +35,8 @@ const LandingPage = () => {
     <div className="landing-container">
       <div className="landing-overlay">
         <div className="landing-content">
-          <h1>Welcome to CCon</h1>
-          <p>Your trusted platform for counseling and mental health support</p>
+          <h1>Welcome to WellPath</h1>
+          <p>Connecting You to the Right Care</p>
           <div className="landing-buttons">
             <Link to="/signup" className="landing-button primary">
               Sign Up

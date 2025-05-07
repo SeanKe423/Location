@@ -46,9 +46,9 @@ const Login = () => {
       localStorage.setItem("role", res.data.role);
 
       if (res.data.profileCompleted) {
-        navigate("/connection-requests");
+        navigate("/matches");
       } else {
-        navigate(res.data.role === "counselor" ? "/counselor-profile" : "/user-profile");
+        navigate(res.data.role === "institution" ? "/institution-profile" : "/user-profile");
       }
     } catch (error) {
       console.error("Login error:", error.response || error);
@@ -104,7 +104,7 @@ const Login = () => {
                   className="auth-select"
                 >
                   <option value="user">User</option>
-                  <option value="counselor">Counselor</option>
+                  <option value="institution">Institution</option>
                 </select>
               </div>
               

@@ -1,5 +1,5 @@
 const User = require('../models/User');
-const Counselor = require('../models/Counselor');
+const Institution = require('../models/Institution');
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcryptjs');
 
@@ -9,7 +9,7 @@ exports.signup = async (req, res) => {
     const { name, email, password, role } = req.body;
 
     // Check if user already exists
-    let user = await User.findOne({ email });
+    let user = await Institution.findOne({ email });
     if (user) {
       return res.status(400).json({ message: 'User already exists' });
     }
@@ -19,10 +19,10 @@ exports.signup = async (req, res) => {
     const hashedPassword = await bcrypt.hash(password, salt);
 
     // Create user based on role
-    if (role === 'counselor') {
-      // For counselors, we only create the basic auth info
+    if (role === 'institution') {
+      // For institutions, we only create the basic auth info
       // The rest of the profile will be completed in the profile creation step
-      user = new Counselor({
+      user = new Institution({
         email,
         password: hashedPassword,
         // Set default values for required fields
@@ -83,8 +83,8 @@ exports.login = async (req, res) => {
 
     // Find user based on role
     let user;
-    if (role === 'counselor') {
-      user = await Counselor.findOne({ email });
+    if (role === 'institution') {
+      user = await Institution.findOne({ email });
     } else {
       user = await User.findOne({ email });
     }
@@ -132,9 +132,9 @@ exports.getUserProfile = async (req, res) => {
     console.log('User role:', req.user.role);
 
     let user;
-    if (req.user.role === 'counselor') {
-      console.log('Searching in Counselor collection');
-      user = await Counselor.findById(req.user.id);
+    if (req.user.role === 'institution') {
+      console.log('Searching in Institution collection');
+      user = await Institution.findById(req.user.id);
     } else {
       console.log('Searching in User collection');
       user = await User.findById(req.user.id);

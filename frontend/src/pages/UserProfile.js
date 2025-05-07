@@ -413,7 +413,7 @@ const UserProfile = () => {
         <div className="auth-hero profile-hero">
           <div className="auth-hero-content">
             <h1>Complete Your Profile</h1>
-            <p>Help us understand you better to provide the best possible support</p>
+            <p>Help us understand you better to find the support that works for you</p> {/* Alternative: Let’s find the support that works for you*/}
           </div>
         </div>
 

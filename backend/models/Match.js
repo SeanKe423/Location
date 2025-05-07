@@ -8,7 +8,7 @@ const matchSchema = new mongoose.Schema({
   },
   counselorId: {
     type: mongoose.Schema.Types.ObjectId,
-    ref: 'Counselor',
+    ref: 'Institution',
     required: true
   },
   matchScore: {

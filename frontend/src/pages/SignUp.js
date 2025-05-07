@@ -23,7 +23,7 @@ const SignUp = () => {
       localStorage.setItem("token", res.data.token);
       localStorage.setItem("role", res.data.role);
       // Redirect based on role
-      navigate(formData.role === "user" ? "/user-profile" : "/counselor-profile");
+      navigate(formData.role === "user" ? "/user-profile" : "/institution-profile");
     } catch (error) {
       alert(error.response?.data?.message || "Signup failed");
     }
@@ -37,7 +37,7 @@ const SignUp = () => {
           <div className="auth-hero-content">
             <h1 style={{ fontSize: '4rem', marginBottom: '1rem' }}>Begin Your Journey</h1>
             <p style={{ fontSize: '1.5rem', opacity: '0.9' }}>
-              Join our community and take the first step towards mental wellness
+            Support isn’t far. Let’s get you closer.
             </p>
           </div>
         </div>
@@ -91,7 +91,7 @@ const SignUp = () => {
                   style={{ fontSize: '1.2rem', padding: '1rem' }}
                 >
                   <option value="user">User</option>
-                  <option value="counselor">Counselor</option>
+                  <option value="institution">Institution</option>
                 </select>
               </div>
               

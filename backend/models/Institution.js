@@ -136,4 +136,4 @@ counselorSchema.pre('save', function(next) {
   next();
 });
 
-module.exports = mongoose.model("Counselor", counselorSchema);
+module.exports = mongoose.model("Institution", counselorSchema);

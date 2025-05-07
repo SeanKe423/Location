@@ -15,7 +15,7 @@ L.Icon.Default.mergeOptions({
   shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-shadow.png',
 });
 
-const CounselorProfile = () => {
+const InstitutionProfile = () => {
   const [step, setStep] = useState(1);
   const [formData, setFormData] = useState({
     // Step 1: Institution Details
@@ -96,51 +96,53 @@ const CounselorProfile = () => {
         return;
       }
 
-      // Create a new object with the form data
-      const formDataToSend = {
+      // Create FormData object for file upload
+      const formDataObj = new FormData();
+      
+      // Append all form fields
+      Object.keys(formData).forEach(key => {
+        if (key === 'location') {
+          formDataObj.append('location', JSON.stringify(formData.location));
+        } else if (key === 'documents') {
+          if (formData.documents) {
+            formDataObj.append('documents', formData.documents);
+          }
+        } else if (Array.isArray(formData[key])) {
+          formDataObj.append(key, JSON.stringify(formData[key]));
+        } else if (typeof formData[key] === 'boolean') {
+          formDataObj.append(key, formData[key].toString());
+        } else {
+          formDataObj.append(key, formData[key]);
+        }
+      });
+
+      // Debug log
+      console.log('Form data being sent:', {
         institutionName: formData.institutionName,
         registrationNumber: formData.registrationNumber,
         yearsOfOperation: formData.yearsOfOperation,
         institutionType: formData.institutionType,
-        otherInstitutionType: formData.otherInstitutionType,
-        location: {
-          coordinates: formData.location.coordinates,
-          address: formData.location.address
-        },
+        location: formData.location,
         phoneNumber: formData.phoneNumber,
         email: formData.email,
         website: formData.website,
         counselingServices: formData.counselingServices,
-        otherCounselingService: formData.otherCounselingService,
         targetAgeGroups: formData.targetAgeGroups,
         languages: formData.languages,
-        otherLanguage: formData.otherLanguage,
         virtualCounseling: formData.virtualCounseling,
-        numberOfCounselors: parseInt(formData.numberOfCounselors),
+        numberOfCounselors: formData.numberOfCounselors,
         waitTime: formData.waitTime,
         isLegallyRegistered: formData.isLegallyRegistered,
         upholdEthics: formData.upholdEthics,
-        consentToDisplay: formData.consentToDisplay
-      };
-
-      // Create FormData object for file upload
-      const formDataObj = new FormData();
-      
-      // Append the JSON data
-      formDataObj.append('data', JSON.stringify(formDataToSend));
-      
-      // Append the document if it exists
-      if (formData.documents) {
-        formDataObj.append('documents', formData.documents);
-      }
-
-      console.log('Sending form data:', formDataToSend); // Debug log
+        consentToDisplay: formData.consentToDisplay,
+        hasDocument: !!formData.documents
+      });
 
       const response = await axios.post(
-        'http://localhost:5000/api/auth/create-counselor-profile',
+        "http://localhost:5000/api/auth/create-institution-profile",
         formDataObj,
         {
-          headers: { 
+          headers: {
             'Authorization': `Bearer ${token}`,
             'Content-Type': 'multipart/form-data'
           }
@@ -154,24 +156,16 @@ const CounselorProfile = () => {
     } catch (error) {
       console.error('Profile creation error:', error.response || error);
       
-      // Handle different types of errors
       if (error.response) {
         const { data } = error.response;
-        
-        if (data.fields) {
-          // Handle missing fields error
-          alert(`Please fill in all required fields: ${data.fields.join(', ')}`);
-        } else if (data.message) {
-          // Handle other server errors
+        if (data.message) {
           alert(`Error: ${data.message}`);
         } else {
           alert('Profile creation failed. Please try again.');
         }
       } else if (error.request) {
-        // Handle network errors
         alert('Network error. Please check your connection and try again.');
       } else {
-        // Handle other errors
         alert('An unexpected error occurred. Please try again.');
       }
     }
@@ -408,7 +402,7 @@ const CounselorProfile = () => {
                   className='ol'
                   type="text"
                   name="otherLanguage"
-                  placeholder="Local languages"
+                  placeholder="Other languages"
                   value={formData.otherLanguage}
                   onChange={handleChange}
                 />
@@ -572,4 +566,4 @@ const CounselorProfile = () => {
   );
 };
 
-export default CounselorProfile; 
+export default InstitutionProfile; 

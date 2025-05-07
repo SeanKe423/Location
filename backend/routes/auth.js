@@ -3,7 +3,7 @@ const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 const authMiddleware = require("../middleware/authMiddleware");
 const User = require("../models/User");
-const Counselor = require("../models/Counselor");
+const Institution = require("../models/Institution");
 const router = express.Router();
 const authController = require('../controllers/authController');
 
@@ -18,8 +18,8 @@ router.get('/user-profile', authMiddleware, authController.getUserProfile);
 router.get("/profile", authMiddleware, async (req, res) => {
   try {
     const user =
-      req.user.role === "counselor"
-        ? await Counselor.findById(req.user.id).select("-password")
+      req.user.role === "institution"
+        ? await Institution.findById(req.user.id).select("-password")
         : await User.findById(req.user.id).select("-password");
 
     if (!user) {
@@ -32,28 +32,20 @@ router.get("/profile", authMiddleware, async (req, res) => {
   }
 });
 
-// Add this route for counselor profile creation
-router.post("/create-counselor-profile", authMiddleware, async (req, res) => {
+// Add this route for institution profile creation
+router.post("/create-institution-profile", authMiddleware, async (req, res) => {
   try {
-    console.log('Request user:', req.user); // Debug log
-    const counselorId = req.user.id;
+    console.log('Request received:', {
+      body: req.body,
+      files: req.files,
+      user: req.user
+    });
 
-    // Verify the user is a counselor
-    if (req.user.role !== 'counselor') {
-      return res.status(403).json({ message: 'Access denied. Counselor role required.' });
-    }
+    const institutionId = req.user.id;
 
-    // Parse the form data
-    let formData;
-    try {
-      formData = JSON.parse(req.body.data);
-      console.log('Parsed form data:', formData); // Debug log
-    } catch (parseError) {
-      console.error('Error parsing form data:', parseError);
-      return res.status(400).json({ 
-        message: "Invalid form data format",
-        error: parseError.message 
-      });
+    // Verify the user is an institution
+    if (req.user.role !== 'institution') {
+      return res.status(403).json({ message: 'Access denied. Institution role required.' });
     }
 
     // Handle file upload if documents were included
@@ -65,64 +57,73 @@ router.post("/create-counselor-profile", authMiddleware, async (req, res) => {
       documentUrl = `/uploads/${fileName}`;
     }
 
-    // Validate required fields
-    const requiredFields = [
-      'institutionName',
-      'registrationNumber',
-      'yearsOfOperation',
-      'institutionType',
-      'phoneNumber',
-      'virtualCounseling',
-      'numberOfCounselors',
-      'waitTime'
-    ];
-
-    const missingFields = requiredFields.filter(field => !formData[field]);
-    if (missingFields.length > 0) {
-      return res.status(400).json({
-        message: "Missing required fields",
-        fields: missingFields
-      });
-    }
-
-    // Validate location data
-    if (!formData.location || !formData.location.address) {
-      return res.status(400).json({
-        message: "Location address is required"
-      });
-    }
-
-    // Find and update counselor profile with new structure
+    // Parse arrays and objects from form data
     const updateData = {
-      ...formData,
+      ...req.body,
       documents: documentUrl,
       profileCompleted: true
     };
 
-    console.log('Update data:', updateData); // Debug log
+    // Parse JSON strings back to objects/arrays
+    try {
+      if (typeof updateData.location === 'string') {
+        updateData.location = JSON.parse(updateData.location);
+      }
+      if (typeof updateData.counselingServices === 'string') {
+        updateData.counselingServices = JSON.parse(updateData.counselingServices);
+      }
+      if (typeof updateData.targetAgeGroups === 'string') {
+        const parsedAgeGroups = JSON.parse(updateData.targetAgeGroups);
+        // Validate age groups against enum values
+        const validAgeGroups = ['children', 'adolescents', 'youngAdults', 'adults', 'seniors'];
+        updateData.targetAgeGroups = parsedAgeGroups.filter(group => validAgeGroups.includes(group));
+        console.log('Parsed age groups:', updateData.targetAgeGroups);
+      }
+      if (typeof updateData.languages === 'string') {
+        updateData.languages = JSON.parse(updateData.languages);
+      }
+    } catch (parseError) {
+      console.error('Error parsing form data:', parseError);
+      return res.status(400).json({ 
+        message: "Error parsing form data",
+        error: parseError.message 
+      });
+    }
 
-    const counselor = await Counselor.findByIdAndUpdate(
-      counselorId,
+    // Convert string booleans to actual booleans
+    updateData.isLegallyRegistered = updateData.isLegallyRegistered === 'true';
+    updateData.upholdEthics = updateData.upholdEthics === 'true';
+    updateData.consentToDisplay = updateData.consentToDisplay === 'true';
+
+    // Convert numberOfCounselors to number
+    if (updateData.numberOfCounselors) {
+      updateData.numberOfCounselors = parseInt(updateData.numberOfCounselors);
+    }
+
+    console.log('Update data:', updateData);
+
+    const institution = await Institution.findByIdAndUpdate(
+      institutionId,
       updateData,
       { new: true, runValidators: true }
     );
 
-    if (!counselor) {
-      return res.status(404).json({ message: "Counselor not found" });
+    if (!institution) {
+      return res.status(404).json({ message: "Institution not found" });
     }
 
     res.json({
       message: "Profile created successfully",
-      counselor
+      institution
     });
 
   } catch (error) {
     console.error("Profile creation error:", error);
-    console.error("Error stack:", error.stack); // Add stack trace
+    console.error("Error stack:", error.stack);
     res.status(500).json({ 
       message: "Profile creation failed",
       error: error.message,
-      stack: error.stack // Include stack trace in response
+      stack: error.stack
     });
   }
 });
@@ -133,7 +134,7 @@ router.post("/create-user-profile", authMiddleware, async (req, res) => {
     console.log('Creating user profile with data:', JSON.stringify(req.body, null, 2));
     const userId = req.user.id;
 
-    // Verify user exists and is not a counselor
+    // Verify user exists and is not an institution
     const existingUser = await User.findById(userId);
     if (!existingUser) {
       return res.status(404).json({ message: "User not found" });
@@ -223,17 +224,17 @@ router.post("/create-user-profile", authMiddleware, async (req, res) => {
   }
 });
 
-// Get counselor profile
-router.get("/counselor-profile", authMiddleware, async (req, res) => {
+// Get institution profile
+router.get("/institution-profile", authMiddleware, async (req, res) => {
   try {
-    const counselorId = req.user.id;
-    const counselor = await Counselor.findById(counselorId).select('-password');
+    const institutionId = req.user.id;
+    const institution = await Institution.findById(institutionId).select('-password');
     
-    if (!counselor) {
-      return res.status(404).json({ message: "Counselor not found" });
+    if (!institution) {
+      return res.status(404).json({ message: "Institution not found" });
     }
 
-    res.json(counselor);
+    res.json(institution);
   } catch (error) {
     console.error("Profile fetch error:", error);
     res.status(500).json({ message: "Failed to fetch profile" });
@@ -276,10 +277,10 @@ router.put("/edit-user-profile", authMiddleware, async (req, res) => {
   }
 });
 
-// Edit counselor profile
-router.put("/edit-counselor-profile", authMiddleware, async (req, res) => {
+// Edit institution profile
+router.put("/edit-institution-profile", authMiddleware, async (req, res) => {
   try {
-    const counselorId = req.user.id;
+    const institutionId = req.user.id;
     
     let documentUrl = undefined;
     if (req.files && req.files.documents) {
@@ -309,6 +310,7 @@ router.put("/edit-counselor-profile", authMiddleware, async (req, res) => {
       virtualCounseling: req.body.virtualCounseling,
       numberOfCounselors: req.body.numberOfCounselors,
       waitTime: req.body.waitTime,
+      numberOfInstitutions: req.body.numberOfInstitutions,
       isLegallyRegistered: req.body.isLegallyRegistered === 'true',
       upholdEthics: req.body.upholdEthics === 'true',
       consentToDisplay: req.body.consentToDisplay === 'true'
@@ -319,19 +321,19 @@ router.put("/edit-counselor-profile", authMiddleware, async (req, res) => {
       updateData.documents = documentUrl;
     }
 
-    const updatedCounselor = await Counselor.findByIdAndUpdate(
-      counselorId,
+    const updatedInstitution = await Institution.findByIdAndUpdate(
+      institutionId,
       updateData,
       { new: true, runValidators: true }
     );
 
-    if (!updatedCounselor) {
-      return res.status(404).json({ message: "Counselor not found" });
+    if (!updatedInstitution) {
+      return res.status(404).json({ message: "Institution not found" });
     }
 
     res.json({
       message: "Profile updated successfully",
-      counselor: updatedCounselor
+      institution: updatedInstitution
     });
   } catch (error) {
     console.error("Profile update error:", error);
@@ -345,12 +347,12 @@ router.get("/verify-token", authMiddleware, (req, res) => {
 });
 
 // Add this route temporarily for testing
-router.post('/create-test-counselor', async (req, res) => {
+router.post('/create-test-institution', async (req, res) => {
   try {
-    const testCounselor = new Counselor({
-      email: 'test.counselor@example.com',
+    const testInstitution = new Institution({
+      email: 'test.institution@example.com',
       password: await bcrypt.hash('password123', 10),
-      fullName: 'Test Counselor',
+      fullName: 'Test Institution',
       phoneNumber: '1234567890',
       gender: 'female',
       languages: ['English', 'Swahili'],
@@ -366,11 +368,11 @@ router.post('/create-test-counselor', async (req, res) => {
       isVerified: true
     });
 
-    await testCounselor.save();
-    res.json({ message: 'Test counselor created', counselor: testCounselor });
+    await testInstitution.save();
+    res.json({ message: 'Test institution created', institution: testInstitution });
   } catch (error) {
-    console.error('Error creating test counselor:', error);
-    res.status(500).json({ message: 'Error creating test counselor', error: error.message });
+    console.error('Error creating test institution:', error);
+    res.status(500).json({ message: 'Error creating test institution', error: error.message });
   }
 });
 
