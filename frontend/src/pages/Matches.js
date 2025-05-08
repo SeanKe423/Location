@@ -121,7 +121,7 @@ const Matches = () => {
                   <h4>Compatibility</h4>
                   <div className="score-details">
                     <div className="score-item">
-                      <span>Overall Match: {match.scores.total}%</span>
+                      <span>Overall Match: {Math.round(match.scores.total)}%</span>
                       <div className="score-bar">
                         <div 
                           className="score-fill" 
@@ -138,7 +138,7 @@ const Matches = () => {
                 <div className="request-section">
                   <h4>Services Offered</h4>
                   <div className="tags-container">
-                    {match.institution.services?.map((service, index) => (
+                    {match.institution.counselingServices?.map((service, index) => (
                       <span key={`${match.institution.id}-service-${index}`} className="service-tag">
                         {service}
                       </span>
@@ -176,15 +176,6 @@ const Matches = () => {
                     )}
                   </div>
                 </div>
-              </div>
-
-              <div className="request-actions">
-                <button 
-                  onClick={() => handleConnect(match.institution.id)}
-                  className="accept-button"
-                >
-                  Connect
-                </button>
               </div>
             </div>
           ))}

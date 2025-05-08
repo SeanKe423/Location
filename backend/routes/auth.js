@@ -141,7 +141,7 @@ router.post("/create-user-profile", authMiddleware, async (req, res) => {
     }
 
     // Validate required fields
-    if (!req.body.ageGroup || !req.body.gender || !req.body.languages || !req.body.counselingTypes || !req.body.severityLevel || !req.body.preferredMode) {
+    if (!req.body.ageGroup || !req.body.gender || !req.body.languages || !req.body.counselingServices || !req.body.severityLevel || !req.body.preferredMode) {
       return res.status(400).json({ 
         message: "Missing required fields",
         receivedData: req.body
@@ -177,8 +177,8 @@ router.post("/create-user-profile", authMiddleware, async (req, res) => {
         coordinates: req.body.location.coordinates,
         address: req.body.location.address
       },
-      counselingTypes: safeParseArray(req.body.counselingTypes),
-      otherCounselingType: req.body.otherCounselingType,
+      counselingServices: safeParseArray(req.body.counselingServices),
+      otherCounselingService: req.body.otherCounselingService,
       severityLevel: req.body.severityLevel,
       preferredMode: safeParseArray(req.body.preferredMode),
       privacyPolicyConsent: req.body.privacyPolicyConsent,
@@ -253,8 +253,8 @@ router.put("/edit-user-profile", authMiddleware, async (req, res) => {
         gender: req.body.gender,
         languages: Array.isArray(req.body.languages) ? req.body.languages : JSON.parse(req.body.languages || '[]'),
         otherLanguage: req.body.otherLanguage,
-        counselingTypes: Array.isArray(req.body.counselingTypes) ? req.body.counselingTypes : JSON.parse(req.body.counselingTypes || '[]'),
-        otherCounselingType: req.body.otherCounselingType,
+        counselingServices: Array.isArray(req.body.counselingServices) ? req.body.counselingServices : JSON.parse(req.body.counselingServices || '[]'),
+        otherCounselingService: req.body.otherCounselingService,
         currentIssues: Array.isArray(req.body.currentIssues) ? req.body.currentIssues : JSON.parse(req.body.currentIssues || '[]'),
         otherIssue: req.body.otherIssue,
         severityLevel: req.body.severityLevel,

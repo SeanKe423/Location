@@ -1,4 +1,5 @@
 const mongoose = require("mongoose");
+const COUNSELING_SERVICES = require('../constants/counselingServices');
 
 const counselorSchema = new mongoose.Schema({
   // User authentication fields
@@ -56,7 +57,8 @@ const counselorSchema = new mongoose.Schema({
 
   // Step 3: Services Offered
   counselingServices: [{
-    type: String
+    type: String,
+    enum: COUNSELING_SERVICES
   }],
   otherCounselingService: {
     type: String

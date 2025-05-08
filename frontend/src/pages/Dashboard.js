@@ -72,9 +72,9 @@ const Dashboard = () => {
 
       <div className="info-section">
         <h4>Counseling Preferences</h4>
-        <p><strong>Counseling Types:</strong> {profile.counselingTypes?.join(', ') || 'Not specified'}</p>
-        {profile.otherCounselingType && (
-          <p><strong>Other Counseling Type:</strong> {profile.otherCounselingType}</p>
+        <p><strong>Counseling Services:</strong> {profile.counselingServices?.join(', ') || 'Not specified'}</p>
+        {profile.otherCounselingService && (
+          <p><strong>Other Counseling Service:</strong> {profile.otherCounselingService}</p>
         )}
         <p><strong>Current Issues:</strong> {profile.currentIssues?.join(', ') || 'Not specified'}</p>
         {profile.otherIssue && <p><strong>Other Issue:</strong> {profile.otherIssue}</p>}

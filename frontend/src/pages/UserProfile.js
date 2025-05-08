@@ -4,6 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import { MapContainer, TileLayer, Marker, useMapEvents } from 'react-leaflet';
 import 'leaflet/dist/leaflet.css';
 import '../App.css';
+import { COUNSELING_SERVICES } from '../constants/counselingServices';
 
 const UserProfile = () => {
   const [step, setStep] = useState(1);
@@ -19,8 +20,8 @@ const UserProfile = () => {
     },
 
     // Step 2: Counseling Needs
-    counselingTypes: [],
-    otherCounselingType: '',
+    counselingServices: [],
+    otherCounselingService: '',
     severityLevel: '',
 
     // Step 3: Accessibility & Availability
@@ -73,7 +74,7 @@ const UserProfile = () => {
     }
 
     if (step === 2) {
-      if (!formData.counselingTypes.length || !formData.severityLevel) {
+      if (!formData.counselingServices.length || !formData.severityLevel) {
         alert('Please complete all required fields in Counseling Needs');
         return;
       }
@@ -128,7 +129,7 @@ const UserProfile = () => {
 
         if (response.data) {
           alert('Profile created successfully!');
-          navigate('/matchmaking');
+          navigate('/matches');
         }
       } catch (error) {
         console.error('Profile creation error:', error.response?.data || error);
@@ -172,10 +173,11 @@ const UserProfile = () => {
               <div className="radio-group">
                 <label>Age Group</label>
                 {[
-                  ['18-25', '18–25'],
-                  ['26-35', '26–35'],
-                  ['36-50', '36–50'],
-                  ['51above', '51 and above']
+                  ['children', 'Children (3–12)'],
+                  ['adolescents', 'Adolescents (13–17)'],
+                  ['youngAdults', 'Young Adults (18–35)'],
+                  ['adults', 'Adults (36–60)'],
+                  ['seniors', 'Seniors (61+)']
                 ].map(([value, label]) => (
                   <div key={value}>
                     <input
@@ -276,33 +278,23 @@ const UserProfile = () => {
             <div className="form-questions">
               <div className="checkbox-group">
                 <label>What Type of Counseling Are You Seeking?</label>
-                {[
-                  ['General Mental Health', 'General Mental Health (e.g., stress, anxiety)'],
-                  ['Relationship', 'Relationship / Marital Counseling'],
-                  ['Family', 'Family Counseling'],
-                  ['Trauma', 'Trauma & Abuse Recovery'],
-                  ['Faith-Based', 'Faith-Based Counseling'],
-                  ['Career', 'Career / Workplace Counseling'],
-                  ['Addiction', 'Addiction Counseling'],
-                  ['Grief', 'Grief & Loss Counseling'],
-                  ['Academic', 'Student / Academic Counseling']
-                ].map(([value, label]) => (
-                  <div key={value}>
+                {COUNSELING_SERVICES.map(service => (
+                  <div key={service}>
                     <input
                       type="checkbox"
-                      name="counselingTypes"
-                      value={value}
-                      checked={formData.counselingTypes.includes(value)}
+                      name="counselingServices"
+                      value={service}
+                      checked={formData.counselingServices.includes(service)}
                       onChange={handleChange}
                     />
-                    <label>{label}</label>
+                    <label>{service}</label>
                   </div>
                 ))}
                 <input
                   type="text"
-                  name="otherCounselingType"
+                  name="otherCounselingService"
                   placeholder="Other counseling type"
-                  value={formData.otherCounselingType}
+                  value={formData.otherCounselingService}
                   onChange={handleChange}
                 />
               </div>
@@ -312,7 +304,7 @@ const UserProfile = () => {
                 {[
                   ['mild', 'Mild (Manageable on my own)'],
                   ['moderate', 'Moderate (Affecting my daily life)'],
-                  ['severe', 'Severe (Significant distress or disruption)']
+                  ['severe', 'Severe (Significant distress/disruption)']
                 ].map(([value, label]) => (
                   <div key={value}>
                     <input
@@ -413,7 +405,7 @@ const UserProfile = () => {
         <div className="auth-hero profile-hero">
           <div className="auth-hero-content">
             <h1>Complete Your Profile</h1>
-            <p>Help us understand you better to find the support that works for you</p> {/* Alternative: Let’s find the support that works for you*/}
+            <p>Help us understand you better to find the support that works for you</p> {/* Alternative: Let's find the support that works for you*/}
           </div>
         </div>
 

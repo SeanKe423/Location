@@ -6,6 +6,7 @@ import signupImage from '../signupuser.jpg';
 import { MapContainer, TileLayer, Marker, useMapEvents } from 'react-leaflet';
 import 'leaflet/dist/leaflet.css';
 import L from 'leaflet';
+import { COUNSELING_SERVICES } from '../constants/counselingServices';
 
 // Fix for default marker icon
 delete L.Icon.Default.prototype._getIconUrl;
@@ -327,17 +328,7 @@ const InstitutionProfile = () => {
             <div className="form-questions">
               <div className="checkbox-group">
                 <label>Counseling Services Provided:</label>
-                {[
-                  'General Mental Health',
-                  'Relationship/Marital Counseling',
-                  'Family Counseling',
-                  'Trauma & Abuse Recovery',
-                  'Faith-Based Counseling',
-                  'Career/Workplace Counseling',
-                  'Addiction Counseling',
-                  'Grief & Loss Counseling',
-                  'Student & Academic Counseling'
-                ].map(service => (
+                {COUNSELING_SERVICES.map(service => (
                   <div key={service}>
                     <input
                       type="checkbox"
@@ -362,11 +353,11 @@ const InstitutionProfile = () => {
               <div className="checkbox-group">
                 <label>Target Age Groups:</label>
                 {[
-                  ['children', 'Children (3-12)'],
+                  ['children', 'Children (3–12)'],
                   ['adolescents', 'Adolescents (13–17)'],
-                  ['youngAdults', 'Young Adults (18–25)'],
-                  ['adults', 'Adults (26–50)'],
-                  ['seniors', 'Seniors (51+)']
+                  ['youngAdults', 'Young Adults (18–35)'],
+                  ['adults', 'Adults (36–60)'],
+                  ['seniors', 'Seniors (61+)']
                 ].map(([value, label]) => (
                   <div key={value}>
                     <input

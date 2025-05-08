@@ -20,7 +20,7 @@ router.get('/matches', authMiddleware, async (req, res) => {
     // Get all institutions that have completed their profiles
     const institutions = await Institution.find({ profileCompleted: true });
     console.log('Found institutions:', institutions.length);
-    
+
     if (institutions.length === 0) {
       return res.status(404).json({ message: 'No institutions available for matching' });
     }
@@ -35,7 +35,7 @@ router.get('/matches', authMiddleware, async (req, res) => {
         institution: {
           id: match.institution._id,
           name: match.institution.institutionName,
-          services: match.institution.counselingServices || [],
+          counselingServices: match.institution.counselingServices || [],
           languages: match.institution.languages || [],
           location: match.institution.location || {},
           waitTime: match.institution.waitTime,

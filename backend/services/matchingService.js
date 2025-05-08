@@ -96,6 +96,7 @@ const calculateLocationMatchScore = (userLocation, institutionLocation, preferre
   return Math.min(score, maxScore);
 };
 
+// Age group matching uses standardized values: children (3–12), adolescents (13–17), youngAdults (18–35), adults (36–60), seniors (61+)
 const calculateAgeGroupMatchScore = (userAgeGroup, institutionTargetAgeGroups) => {
   const maxScore = 10;
   return institutionTargetAgeGroups.includes(userAgeGroup) ? maxScore : 0;
@@ -164,7 +165,7 @@ const findMatches = (user, institutions) => {
       });
 
       const counselingScore = calculateCounselingMatchScore(
-        user.counselingTypes || [],
+        user.counselingServices || [],
         institution.counselingServices || [],
         user.severityLevel || 'moderate'
       );
@@ -198,7 +199,10 @@ const findMatches = (user, institutions) => {
       return {
         institution: {
           ...institution.toObject(),
-          targetAgeGroups // Ensure targetAgeGroups is included
+          id: institution._id,
+          name: institution.institutionName,
+          counselingServices: institution.counselingServices || institution.services || [],
+          targetAgeGroups
         },
         scores: {
           counseling: counselingScore,
@@ -249,7 +253,7 @@ class MatchingService {
     score += matchCriteria.languageMatch;
 
     // Specialization matching (40% weight)
-    const userNeeds = new Set(user.counselingTypes || []);
+    const userNeeds = new Set(user.counselingServices || []);
     const institutionSpecializations = new Set(institution.specializations || []);
     const specializationMatches = [...userNeeds].filter(need => 
       institutionSpecializations.has(need)

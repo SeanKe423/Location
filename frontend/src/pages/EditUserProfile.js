@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import '../App.css';
+import { COUNSELING_SERVICES } from '../constants/counselingServices';
 
 const EditUserProfile = () => {
   const [step, setStep] = useState(1);
@@ -10,8 +11,8 @@ const EditUserProfile = () => {
     gender: '',
     languages: [],
     otherLanguage: '',
-    counselingTypes: [],
-    otherCounselingType: '',
+    counselingServices: [],
+    otherCounselingService: '',
     currentIssues: [],
     otherIssue: '',
     severityLevel: '',
@@ -71,7 +72,17 @@ const EditUserProfile = () => {
     }
   };
 
-  // ... rest of the component remains the same as UserProfile.js
+  const handleChange = (e) => {
+    const { name, value, type, checked } = e.target;
+    const newValue = type === 'checkbox' ? (checked ? [...formData[name], value] : formData[name].filter((item) => item !== value)) : value;
+    setFormData({ ...formData, [name]: newValue });
+  };
+
+  return (
+    <div className="edit-user-profile">
+      {/* ... rest of the component remains the same as UserProfile.js ... */}
+    </div>
+  );
 };
 
 export default EditUserProfile; 

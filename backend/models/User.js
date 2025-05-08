@@ -1,4 +1,5 @@
 const mongoose = require('mongoose');
+const COUNSELING_SERVICES = require('../constants/counselingServices');
 
 const userSchema = new mongoose.Schema({
   // Authentication fields
@@ -15,7 +16,7 @@ const userSchema = new mongoose.Schema({
   // Profile fields
   ageGroup: {
     type: String,
-    enum: ['18-25', '26-35', '36-50', '51above'],
+    enum: ['children', 'adolescents', 'youngAdults', 'adults', 'seniors'],
     required: false
   },
   gender: {
@@ -45,10 +46,11 @@ const userSchema = new mongoose.Schema({
   },
 
   // Counseling needs
-  counselingTypes: [{
-    type: String
+  counselingServices: [{
+    type: String,
+    enum: COUNSELING_SERVICES
   }],
-  otherCounselingType: {
+  otherCounselingService: {
     type: String
   },
   severityLevel: {

@@ -1801,3 +1801,15 @@ width:275px !important;
   font-style: italic;
   font-size: 0.9rem;
 }
+
+.location-group input[name="location.address"]{
+  width: 90% !important;
+}
+
+.checkbox-group input[name="otherCounselingService"]{
+width: 90% !important;
+}
+
+.map-container input[name="location.address"]{
+  width: 90% !important;
+}
