@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import '../App.css';
@@ -53,8 +53,33 @@ const InstitutionProfile = () => {
     upholdEthics: false,
     consentToDisplay: false
   });
+  const [isEditMode, setIsEditMode] = useState(false);
 
   const navigate = useNavigate();
+
+  useEffect(() => {
+    // On mount, try to fetch existing profile
+    const fetchProfile = async () => {
+      try {
+        const token = localStorage.getItem('token');
+        if (!token) return;
+        const response = await axios.get('http://localhost:5000/api/auth/institution-profile', {
+          headers: { 'Authorization': `Bearer ${token}` }
+        });
+        if (response.data && response.data.institutionName) {
+          setFormData(prev => ({ ...prev, ...response.data }));
+          setIsEditMode(true);
+        }
+      } catch (error) {
+        // If 404, it's fine (means no profile yet)
+        if (error.response && error.response.status !== 404) {
+          console.error('Error fetching institution profile:', error);
+        }
+      }
+    };
+    fetchProfile();
+    // eslint-disable-next-line
+  }, []);
 
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
@@ -90,17 +115,12 @@ const InstitutionProfile = () => {
     e.preventDefault();
     try {
       const token = localStorage.getItem('token');
-      
       if (!token) {
         alert('Please login first');
         navigate('/login');
         return;
       }
-
-      // Create FormData object for file upload
       const formDataObj = new FormData();
-      
-      // Append all form fields
       Object.keys(formData).forEach(key => {
         if (key === 'location') {
           formDataObj.append('location', JSON.stringify(formData.location));
@@ -116,53 +136,42 @@ const InstitutionProfile = () => {
           formDataObj.append(key, formData[key]);
         }
       });
-
-      // Debug log
-      console.log('Form data being sent:', {
-        institutionName: formData.institutionName,
-        registrationNumber: formData.registrationNumber,
-        yearsOfOperation: formData.yearsOfOperation,
-        institutionType: formData.institutionType,
-        location: formData.location,
-        phoneNumber: formData.phoneNumber,
-        email: formData.email,
-        website: formData.website,
-        counselingServices: formData.counselingServices,
-        targetAgeGroups: formData.targetAgeGroups,
-        languages: formData.languages,
-        virtualCounseling: formData.virtualCounseling,
-        numberOfCounselors: formData.numberOfCounselors,
-        waitTime: formData.waitTime,
-        isLegallyRegistered: formData.isLegallyRegistered,
-        upholdEthics: formData.upholdEthics,
-        consentToDisplay: formData.consentToDisplay,
-        hasDocument: !!formData.documents
-      });
-
-      const response = await axios.post(
-        "http://localhost:5000/api/auth/create-institution-profile",
-        formDataObj,
-        {
-          headers: {
-            'Authorization': `Bearer ${token}`,
-            'Content-Type': 'multipart/form-data'
+      let response;
+      if (isEditMode) {
+        response = await axios.put(
+          'http://localhost:5000/api/auth/edit-institution-profile',
+          formDataObj,
+          {
+            headers: {
+              'Authorization': `Bearer ${token}`,
+              'Content-Type': 'multipart/form-data'
+            }
           }
-        }
-      );
-
+        );
+      } else {
+        response = await axios.post(
+          'http://localhost:5000/api/auth/create-institution-profile',
+          formDataObj,
+          {
+            headers: {
+              'Authorization': `Bearer ${token}`,
+              'Content-Type': 'multipart/form-data'
+            }
+          }
+        );
+      }
       if (response.data) {
-        alert('Profile created successfully!');
+        alert(isEditMode ? 'Profile updated successfully!' : 'Profile created successfully!');
         navigate('/dashboard');
       }
     } catch (error) {
-      console.error('Profile creation error:', error.response || error);
-      
+      console.error('Profile save error:', error.response || error);
       if (error.response) {
         const { data } = error.response;
         if (data.message) {
           alert(`Error: ${data.message}`);
         } else {
-          alert('Profile creation failed. Please try again.');
+          alert('Profile save failed. Please try again.');
         }
       } else if (error.request) {
         alert('Network error. Please check your connection and try again.');
@@ -295,16 +304,6 @@ const InstitutionProfile = () => {
                 name="phoneNumber"
                 placeholder="Phone Number"
                 value={formData.phoneNumber}
-                onChange={handleChange}
-                required
-              />
-
-              <input
-                className='counseltext'
-                type="email"
-                name="email"
-                placeholder="Email"
-                value={formData.email}
                 onChange={handleChange}
                 required
               />

@@ -1,6 +1,5 @@
 const User = require('../models/User');
 const Institution = require('../models/Institution');
-const Match = require('../models/Match');
 
 const calculateDistance = (coords1, coords2) => {
   const R = 6371; // Earth's radius in km

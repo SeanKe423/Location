@@ -48,7 +48,7 @@ const Dashboard = () => {
   };
 
   const handleEditProfile = () => {
-    navigate(role === 'counselor' ? '/edit-counselor-profile' : '/edit-user-profile');
+    navigate(role === 'institution' ? '/institution-profile' : '/edit-user-profile');
   };
 
   if (error) {
@@ -84,38 +84,31 @@ const Dashboard = () => {
     </div>
   );
 
-  const renderCounselorProfile = () => (
+  const renderInstitutionProfile = () => (
     <div className="profile-info">
-      <h3>Counselor Profile</h3>
+      <h3>Institution Profile</h3>
       <div className="info-section">
         <h4>Basic Information</h4>
-        <p><strong>Full Name:</strong> {profile.fullName || 'Not specified'}</p>
-        <p><strong>Email:</strong> {profile.email || 'Not specified'}</p>
+        <p><strong>Institution Name:</strong> {profile.institutionName || 'Not specified'}</p>
+        <p><strong>Registration Number:</strong> {profile.registrationNumber || 'Not specified'}</p>
+        <p><strong>Institution Type:</strong> {profile.institutionType || 'Not specified'}</p>
+        <p><strong>Location:</strong> {profile.location?.address || 'Not specified'}</p>
         <p><strong>Phone:</strong> {profile.phoneNumber || 'Not specified'}</p>
-        <p><strong>Gender:</strong> {profile.gender || 'Not specified'}</p>
+        <p><strong>Email:</strong> {profile.email || 'Not specified'}</p>
+        <p><strong>Website:</strong> {profile.website || 'Not specified'}</p>
+      </div>
+      <div className="info-section">
+        <h4>Services & Details</h4>
+        <p><strong>Counseling Services:</strong> {profile.counselingServices?.join(', ') || 'Not specified'}</p>
+        <p><strong>Target Age Groups:</strong> {profile.targetAgeGroups?.join(', ') || 'Not specified'}</p>
         <p><strong>Languages:</strong> {profile.languages?.join(', ') || 'Not specified'}</p>
-        {profile.otherLanguage && <p><strong>Other Language:</strong> {profile.otherLanguage}</p>}
+        <p><strong>Virtual Counseling:</strong> {profile.virtualCounseling ? 'Yes' : 'No'}</p>
+        <p><strong>Number of Counselors:</strong> {profile.numberOfCounselors || 'Not specified'}</p>
+        <p><strong>Wait Time:</strong> {profile.waitTime || 'Not specified'}</p>
+        <p><strong>Legally Registered:</strong> {profile.isLegallyRegistered ? 'Yes' : 'No'}</p>
+        <p><strong>Uphold Ethics:</strong> {profile.upholdEthics ? 'Yes' : 'No'}</p>
+        <p><strong>Consent to Display:</strong> {profile.consentToDisplay ? 'Yes' : 'No'}</p>
       </div>
-
-      <div className="info-section">
-        <h4>Qualifications</h4>
-        <p><strong>Education:</strong> {profile.education || 'Not specified'}</p>
-        {profile.otherEducation && <p><strong>Other Education:</strong> {profile.otherEducation}</p>}
-        <p><strong>CPB Number:</strong> {profile.cpbNumber || 'Not specified'}</p>
-        <p><strong>Years of Experience:</strong> {profile.yearsExperience || 'Not specified'}</p>
-        {profile.otherCertifications && (
-          <p><strong>Other Certifications:</strong> {profile.otherCertifications}</p>
-        )}
-      </div>
-
-      <div className="info-section">
-        <h4>Specializations</h4>
-        <p>{profile.specializations?.join(', ') || 'Not specified'}</p>
-        {profile.otherSpecialization && (
-          <p><strong>Other Specialization:</strong> {profile.otherSpecialization}</p>
-        )}
-      </div>
-
       {profile.documents && (
         <div className="info-section">
           <h4>Documents</h4>
@@ -142,7 +135,7 @@ const Dashboard = () => {
       </div>
       
       <div className="dashboard-content">
-        {role === 'counselor' ? renderCounselorProfile() : renderUserProfile()}
+        {role === 'institution' ? renderInstitutionProfile() : renderUserProfile()}
       </div>
     </div>
   );

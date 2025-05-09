@@ -80,7 +80,40 @@ const EditUserProfile = () => {
 
   return (
     <div className="edit-user-profile">
-      {/* ... rest of the component remains the same as UserProfile.js ... */}
+      <h2>Edit User Profile</h2>
+      <form onSubmit={handleSubmit} className="auth-form user-profile-form">
+        <label>Age Group
+          <input type="text" name="ageGroup" value={formData.ageGroup} onChange={handleChange} />
+        </label>
+        <label>Gender
+          <input type="text" name="gender" value={formData.gender} onChange={handleChange} />
+        </label>
+        <label>Languages
+          <input type="text" name="languages" value={formData.languages} onChange={handleChange} placeholder="Comma separated" />
+        </label>
+        <label>Other Language
+          <input type="text" name="otherLanguage" value={formData.otherLanguage} onChange={handleChange} />
+        </label>
+        <label>Counseling Services
+          <input type="text" name="counselingServices" value={formData.counselingServices} onChange={handleChange} placeholder="Comma separated" />
+        </label>
+        <label>Other Counseling Service
+          <input type="text" name="otherCounselingService" value={formData.otherCounselingService} onChange={handleChange} />
+        </label>
+        <label>Current Issues
+          <input type="text" name="currentIssues" value={formData.currentIssues} onChange={handleChange} placeholder="Comma separated" />
+        </label>
+        <label>Other Issue
+          <input type="text" name="otherIssue" value={formData.otherIssue} onChange={handleChange} />
+        </label>
+        <label>Severity Level
+          <input type="text" name="severityLevel" value={formData.severityLevel} onChange={handleChange} />
+        </label>
+        <label>Counselor Gender Preference
+          <input type="text" name="counselorGenderPreference" value={formData.counselorGenderPreference} onChange={handleChange} />
+        </label>
+        <button type="submit" className="auth-button">Save Changes</button>
+      </form>
     </div>
   );
 };

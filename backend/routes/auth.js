@@ -63,6 +63,8 @@ router.post("/create-institution-profile", authMiddleware, async (req, res) => {
       documents: documentUrl,
       profileCompleted: true
     };
+    // Remove email if present in req.body
+    delete updateData.email;
 
     // Parse JSON strings back to objects/arrays
     try {
@@ -230,7 +232,7 @@ router.get("/institution-profile", authMiddleware, async (req, res) => {
     const institutionId = req.user.id;
     const institution = await Institution.findById(institutionId).select('-password');
     
-    if (!institution) {
+    if (!institution || !institution.profileCompleted || institution.institutionName === 'Pending') {
       return res.status(404).json({ message: "Institution not found" });
     }
 
@@ -282,6 +284,11 @@ router.put("/edit-institution-profile", authMiddleware, async (req, res) => {
   try {
     const institutionId = req.user.id;
     
+    // Parse location if sent as a string
+    if (typeof req.body.location === 'string') {
+      req.body.location = JSON.parse(req.body.location);
+    }
+    
     let documentUrl = undefined;
     if (req.files && req.files.documents) {
       const file = req.files.documents;
@@ -300,7 +307,6 @@ router.put("/edit-institution-profile", authMiddleware, async (req, res) => {
         address: req.body.location.address
       },
       phoneNumber: req.body.phoneNumber,
-      email: req.body.email,
       website: req.body.website,
       counselingServices: Array.isArray(req.body.counselingServices) ? req.body.counselingServices : JSON.parse(req.body.counselingServices || '[]'),
       otherCounselingService: req.body.otherCounselingService,
@@ -321,19 +327,20 @@ router.put("/edit-institution-profile", authMiddleware, async (req, res) => {
       updateData.documents = documentUrl;
     }
 
-    const updatedInstitution = await Institution.findByIdAndUpdate(
+    // When updating, do not overwrite email
+    const institution = await Institution.findByIdAndUpdate(
       institutionId,
       updateData,
       { new: true, runValidators: true }
     );
 
-    if (!updatedInstitution) {
+    if (!institution) {
       return res.status(404).json({ message: "Institution not found" });
     }
 
     res.json({
       message: "Profile updated successfully",
-      institution: updatedInstitution
+      institution: institution
     });
   } catch (error) {
     console.error("Profile update error:", error);

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import { MapContainer, TileLayer, Marker, useMapEvents } from 'react-leaflet';
@@ -32,8 +32,33 @@ const UserProfile = () => {
     emergencyCareConsent: false,
     matchingConsent: false
   });
+  const [isEditMode, setIsEditMode] = useState(false);
 
   const navigate = useNavigate();
+
+  useEffect(() => {
+    // On mount, try to fetch existing profile
+    const fetchProfile = async () => {
+      try {
+        const token = localStorage.getItem('token');
+        if (!token) return;
+        const response = await axios.get('http://localhost:5000/api/auth/user-profile', {
+          headers: { 'Authorization': `Bearer ${token}` }
+        });
+        if (response.data && response.data.ageGroup) {
+          setFormData(prev => ({ ...prev, ...response.data }));
+          setIsEditMode(true);
+        }
+      } catch (error) {
+        // If 404, it's fine (means no profile yet)
+        if (error.response && error.response.status !== 404) {
+          console.error('Error fetching user profile:', error);
+        }
+      }
+    };
+    fetchProfile();
+    // eslint-disable-next-line
+  }, []);
 
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
@@ -116,24 +141,38 @@ const UserProfile = () => {
           return;
         }
 
-        const response = await axios.post(
-          'http://localhost:5000/api/auth/create-user-profile',
-          formData,
-          {
-            headers: { 
-              'Authorization': `Bearer ${token}`,
-              'Content-Type': 'application/json'
+        let response;
+        if (isEditMode) {
+          response = await axios.put(
+            'http://localhost:5000/api/auth/edit-user-profile',
+            formData,
+            {
+              headers: { 
+                'Authorization': `Bearer ${token}`,
+                'Content-Type': 'application/json'
+              }
             }
-          }
-        );
+          );
+        } else {
+          response = await axios.post(
+            'http://localhost:5000/api/auth/create-user-profile',
+            formData,
+            {
+              headers: { 
+                'Authorization': `Bearer ${token}`,
+                'Content-Type': 'application/json'
+              }
+            }
+          );
+        }
 
         if (response.data) {
-          alert('Profile created successfully!');
+          alert(isEditMode ? 'Profile updated successfully!' : 'Profile created successfully!');
           navigate('/matches');
         }
       } catch (error) {
-        console.error('Profile creation error:', error.response?.data || error);
-        alert(error.response?.data?.message || 'Profile creation failed. Please try again.');
+        console.error('Profile save error:', error.response?.data || error);
+        alert(error.response?.data?.message || 'Profile save failed. Please try again.');
       }
     }
   };

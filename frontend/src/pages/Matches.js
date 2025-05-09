@@ -34,30 +34,6 @@ const Matches = () => {
     }
   };
 
-  const handleConnect = async (institutionId) => {
-    try {
-      const token = localStorage.getItem('token');
-      if (!token) {
-        setError('Please login first');
-        return;
-      }
-      await axios.post(
-        'http://localhost:5000/api/matching/create-match',
-        { counselorId: institutionId },
-        {
-          headers: { 
-            'Authorization': `Bearer ${token}`
-          }
-        }
-      );
-      // Refresh the matches list
-      fetchMatches();
-    } catch (error) {
-      console.error('Error creating connection request:', error);
-      setError('Error creating connection request. Please try again.');
-    }
-  };
-
   const getAgeGroupLabel = (ageGroup) => {
     const labels = {
       'children': 'Children (0-12)',
@@ -67,6 +43,13 @@ const Matches = () => {
       'seniors': 'Seniors (65+)'
     };
     return labels[ageGroup] || ageGroup;
+  };
+
+  const handleLogout = () => {
+    localStorage.removeItem('token');
+    localStorage.removeItem('role');
+    localStorage.removeItem('userId');
+    navigate('/login');
   };
 
   if (loading) {
@@ -111,9 +94,6 @@ const Matches = () => {
             <div key={match.institution.id} className="request-card">
               <div className="request-header">
                 <h3>{match.institution.name}</h3>
-                <span className={`status-badge ${match.matchQuality.toLowerCase()}`}>
-                  {match.matchQuality}
-                </span>
               </div>
 
               <div className="request-content">
@@ -176,11 +156,30 @@ const Matches = () => {
                     )}
                   </div>
                 </div>
+
+                <div className="request-section">
+                  <h4>Email</h4>
+                  <p style={{ fontSize: '0.95rem', color: '#555', margin: 0 }}>{match.institution.email}</p>
+                </div>
               </div>
             </div>
           ))}
         </div>
       )}
+      <div style={{ display: 'flex', gap: '1rem', marginTop: '2rem', justifyContent: 'center' }}>
+        <button
+          className="edit-button"
+          onClick={() => navigate('/user-profile')}
+        >
+          Edit Profile
+        </button>
+        <button
+          className="logout-button"
+          onClick={handleLogout}
+        >
+          Log Out
+        </button>
+      </div>
     </div>
   );
 };

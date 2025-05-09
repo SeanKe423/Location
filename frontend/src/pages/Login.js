@@ -46,7 +46,11 @@ const Login = () => {
       localStorage.setItem("role", res.data.role);
 
       if (res.data.profileCompleted) {
-        navigate("/matches");
+        if (res.data.role === 'institution') {
+          navigate('/dashboard');
+        } else {
+          navigate('/matches');
+        }
       } else {
         navigate(res.data.role === "institution" ? "/institution-profile" : "/user-profile");
       }

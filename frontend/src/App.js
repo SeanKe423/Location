@@ -9,7 +9,6 @@ import InstitutionProfile from "./pages/InstitutionProfile";
 import EditUserProfile from './pages/EditUserProfile';
 import EditInstitutionProfile from './pages/EditInstitutionProfile';
 import Dashboard from './pages/Dashboard';
-import Matchmaking from './pages/Matchmaking';
 import Matches from './pages/Matches';
 import "./App.css";
 
@@ -47,11 +46,6 @@ const App = () => {
           <Route path="/edit-institution-profile" element={
             <PrivateRoute>
               <EditInstitutionProfile />
-            </PrivateRoute>
-          } />
-          <Route path="/matchmaking" element={
-            <PrivateRoute>
-              <Matchmaking />
             </PrivateRoute>
           } />
           <Route path="/matches" element={
